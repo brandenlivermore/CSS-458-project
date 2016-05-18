@@ -1,9 +1,13 @@
 import numpy as np
+<<<<<<< HEAD
 import Tile
 import animal
 from animal import Deer, Wolf, Animal
+=======
+from tile import Tile
+>>>>>>> origin/master
 
-class environment(object):
+class Environment(object):
 
 #################################################################
 #                    Environment Static Variables
@@ -62,7 +66,8 @@ class environment(object):
         #setting size of grid and creating grid
         self.height = in_height
         self.width = in_width
-        self.grid = np.empty([self.height,self.width], dtype=object)
+        self.grid = np.empty([self.height,self.width], dtype=Tile)
+
 
         #for managing day
         self.current_day = None
@@ -88,3 +93,10 @@ class environment(object):
         def update(self, day_in):
             self.current_day = day_in
             self.grid[:,:].update
+
+
+
+    def is_location_valid(self, location):
+        return location[0] >= 0 and location[0] < Environment.width \
+               and location[1] >= 0 and location[1] < Environment.height
+

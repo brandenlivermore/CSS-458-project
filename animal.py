@@ -12,9 +12,8 @@ class Animal(object):
 
     '''
     def __init__(self, tile):
-        self.hunger = 0.0
         self.speed = 0.0
-        self.health = 0.0
+        self.energy = 0.0
         self.type = None # See AnimalType enum above, can be predator or prey
         self.age = 0
         self.maxAge = 0
@@ -36,8 +35,13 @@ class Animal(object):
         pass
 
     def move(self, environment):
+        x = self.tile.tile_x
+        y = self.tile.tile_y
 
+        x_locations = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
+        y_locations = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
 
+        random_index = random.randint(7)
 
 class Deer(Animal):
     '''Deer object
@@ -47,7 +51,8 @@ class Deer(Animal):
         http://animals.nationalgeographic.com/animals/mammals/white-tailed-deer/
         http://wiredtohunt.com/2010/05/18/how-much-food-does-a-deer-eat-a-year/
     '''
-    def __init__(self):
+    def __init__(self, tile):
+        super(Deer, self).__init__(tile)
         self.hunger = 0.0
 
         self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
@@ -67,6 +72,11 @@ class Deer(Animal):
 
     def update(self):
         pass
+
+class Wolf(Animal):
+
+    def __init__(self, tile):
+        super(Wolf, self).__init__(tile)
 
 #testing
 aDeer = Deer()
