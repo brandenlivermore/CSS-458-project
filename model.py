@@ -33,6 +33,9 @@ MONTHS_PER_YEAR = 12
 
 class Model(object):
     def __init__(self):
+        """
+        Inititilization    
+        """
         self.dailyTemp = N.zeros([TOTAL_DAYS])
         self.dailySun = N.zeros([TOTAL_DAYS])
         self.dailyPrecip = N.zeros([TOTAL_DAYS])
