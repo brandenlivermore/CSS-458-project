@@ -55,7 +55,6 @@ class Model(object):
                 avgSun = (SUN_PER_DAY[month] * x) + (SUN_PER_DAY[nextMonth] * y)
                 self.dailySun[cumulativeDay] = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
 
-
 m = Model()
 m.initWeather()
 print(m.dailyTemp)
