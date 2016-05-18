@@ -25,6 +25,12 @@ SUN_PER_DAY = HOURS_OF_SUN / DAYS_IN_MONTH
 PRECIP_CHANCE = DAYS_WITH_PRECIP / DAYS_IN_MONTH
 PRECIP_PER_DAY = AVG_PRECIP / DAYS_WITH_PRECIP
 
+
+#Global Constants
+NUM_YEARS = 1
+MONTHS_PER_YEAR = 12
+
+
 class Model(object):
     def __init__(self):
         self.dailyTemp = N.zeros([TOTAL_DAYS])
