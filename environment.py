@@ -1,11 +1,6 @@
 import numpy as np
-<<<<<<< HEAD
-import Tile
-import animal
 from animal import Deer, Wolf, Animal
-=======
 from tile import Tile
->>>>>>> origin/master
 
 class Environment(object):
 
