@@ -106,31 +106,6 @@ class Environment(object):
                and location[1] >= 0 and location[1] < Environment.height
 
 
-    def animal_attempt_move(self, location, animal):
-        '''
-        Attempts to move the given animal to the given location.
 
-        If the location is valid, the animal is moved to the
-        new location and the animal is removed from its previous
-        tile and added to the new tile.
 
-        :param location: List of length 2 where index 0 is the
-            x-coordinate and index 1 is the y-coordinate of the
-            desired move location
-        :param animal: The animal that is attempting to move
-        :return: A boolean, True if the move was successful or
-            False otherwise
-        '''
 
-        if not self.is_location_valid(location):
-            return False
-
-        tile = self.grid[location[0], location[1]]
-        original_tile = animal.tile
-
-        original_tile.list_animals.remove(animal)
-        tile.list_animals.append(animal)
-
-        animal.tile = tile
-
-        return True

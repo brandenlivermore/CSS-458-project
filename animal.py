@@ -58,6 +58,36 @@ class Animal(object):
             random_index = random.randint(len(x_locations) - 1)
             success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
 
+    def animal_attempt_move(self, location):
+        '''
+        Attempts to move the given animal to the given location.
+
+        If the location is valid, the animal is moved to the
+        new location and the animal is removed from its previous
+        tile and added to the new tile.
+
+        :param location: List of length 2 where index 0 is the
+            x-coordinate and index 1 is the y-coordinate of the
+            desired move location
+        :param animal: The animal that is attempting to move
+        :return: A boolean, True if the move was successful or
+            False otherwise
+        '''
+
+        environment = self.tile.environment
+
+        if not environment.is_location_valid(location):
+            return False
+
+        tile = environment.grid[location[0], location[1]]
+        original_tile = self.tile
+
+        original_tile.list_animals.remove(self)
+        tile.list_animals.append(self)
+
+        self.tile = tile
+
+        return True
 class Deer(Animal):
     '''Deer object
 
