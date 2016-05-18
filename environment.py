@@ -1,7 +1,7 @@
 import numpy as np
-import tile
+from tile import Tile
 
-class environment(object):
+class Environment(object):
 
     #values for storing the grid of tiles
     width = 0
@@ -54,7 +54,7 @@ class environment(object):
         #setting size of grid and creating grid
         self.height = in_height
         self.width = in_width
-        grid = np.empty([self.height,self.width], dtype=object)
+        grid = np.empty([self.height,self.width], dtype=Tile)
 
 
         well = False
@@ -68,5 +68,12 @@ class environment(object):
                     well = True
                 elif(test_array[x, i] < self.chance_reservoir):
                     res = True
-                grid[x,i] = tile(res, self.soil_types[1], well, \
+                grid[x,i] = Tile(res, self.soil_types[1], well, \
                                  self)
+
+
+    def is_location_valid(self, location):
+        return location[0] >= 0 and location[0] < Environment.width \
+               and location[1] >= 0 and location[1] < Environment.height
+
+
