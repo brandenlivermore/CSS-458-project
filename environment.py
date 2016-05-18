@@ -95,3 +95,18 @@ class Environment(object):
         return location[0] >= 0 and location[0] < Environment.width \
                and location[1] >= 0 and location[1] < Environment.height
 
+
+    def animal_attempt_move(self, location, animal):
+
+        if not self.is_location_valid(location):
+            return False
+
+        tile = self.grid[location[0], location[1]]
+        original_tile = animal.tile
+
+        original_tile.list_animals.remove(animal)
+        tile.list_animals.append(animal)
+
+        animal.tile = tile
+
+        return True

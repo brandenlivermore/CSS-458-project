@@ -43,6 +43,10 @@ class Animal(object):
 
         random_index = random.randint(7)
 
+        success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
+
+
+
 class Deer(Animal):
     '''Deer object
 
