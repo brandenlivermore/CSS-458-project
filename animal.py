@@ -79,15 +79,15 @@ class Animal(object):
         if not environment.is_location_valid(location):
             return False
 
-        tile = environment.grid[location[0], location[1]]
+        new_tile = environment.grid[location[0], location[1]]
+        new_tile.list_animals.append(self)
+
         original_tile = self.tile
-
         original_tile.list_animals.remove(self)
-        tile.list_animals.append(self)
 
-        self.tile = tile
-
+        self.tile = new_tile
         return True
+
 class Deer(Animal):
     '''Deer object
 
