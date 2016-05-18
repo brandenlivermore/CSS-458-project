@@ -1,5 +1,10 @@
 import numpy as N
 import random
+from enum import Enum
+
+class AnimalType(Enum):
+    predator = 1
+    prey = 2
 
 class Animal(object):
     '''Animal object
@@ -10,7 +15,7 @@ class Animal(object):
         self.hunger = 0.0
         self.speed = 0.0
         self.health = 0.0
-        self.type = None #"Predator" or "prey"
+        self.type = None # See AnimalType enum above, can be predator or prey
         self.age = 0
         self.maxAge = 0
         self.weight = 0.0
@@ -42,7 +47,7 @@ class Deer(Animal):
 
         self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
         # self.health = 0.0
-        self.type = "prey"  # "Predator" or "prey"
+        self.type = AnimalType.prey
         self.age = 0.0
         self.maxAge = random.uniform(6,14)
         self.weight = random.uniform(110, 300) #lbs
