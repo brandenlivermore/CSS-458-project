@@ -41,9 +41,11 @@ class Animal(object):
         x_locations = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
         y_locations = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
 
-        random_index = random.randint(7)
+        success = False
 
-        success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
+        while success is False:
+            random_index = random.randint(len(x_locations) - 1)
+            success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
 
 
 
