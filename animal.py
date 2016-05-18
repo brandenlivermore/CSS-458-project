@@ -11,7 +11,7 @@ class Animal(object):
         Base class for all animals
 
     '''
-    def __init__(self):
+    def __init__(self, tile):
         self.hunger = 0.0
         self.speed = 0.0
         self.health = 0.0
@@ -21,6 +21,7 @@ class Animal(object):
         self.weight = 0.0
         self.gestationPeriod = 0
         self.matingSeasons = []
+        self.tile = tile
 
         self.rememberedResources = [] #coords of water, food, etc.
         self.consumptionRate = 0.0
@@ -33,6 +34,10 @@ class Animal(object):
         #perform next step in objective
 
         pass
+
+    def move(self, environment):
+
+
 
 class Deer(Animal):
     '''Deer object

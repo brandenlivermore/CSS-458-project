@@ -1,4 +1,4 @@
-class tile(object):
+class Tile(object):
 
     #contants for the state of the land
     teff_coverage = 0 #percent of land covered in teff
