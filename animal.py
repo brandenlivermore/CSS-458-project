@@ -35,6 +35,17 @@ class Animal(object):
         pass
 
     def move(self, environment):
+        '''
+        Moves the animal randomly.
+
+        A random location is chosen and the animal
+        attempts to move to it. If it is not a valid
+        location, a new location is chosen. This repeats
+        until the animal successfully moves.
+
+        :param environment: the animal's environment
+        :return: None
+        '''
         x = self.tile.tile_x
         y = self.tile.tile_y
 
@@ -46,8 +57,6 @@ class Animal(object):
         while success is False:
             random_index = random.randint(len(x_locations) - 1)
             success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
-
-
 
 class Deer(Animal):
     '''Deer object
