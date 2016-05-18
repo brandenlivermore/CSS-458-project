@@ -71,8 +71,34 @@ class Model(object):
                 avgSun = (SUN_PER_DAY[month] * x) + (SUN_PER_DAY[nextMonth] * y)
                 self.dailySun[cumulativeDay] = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
 
+    def displayData(self):
+        """
+        Displays plots for temperature, sunlight, and precipitation
+        """
+        dayArray = N.arange(0, TOTAL_DAYS)
+        plt.plot(dayArray, m.dailyTemp)
+        plt.axis([0, TOTAL_DAYS, 0, 90])
+        plt.xlabel('Day')
+        plt.ylabel('Temperature (F)')
+        plt.title('Daily Temp')
+        plt.show()
+
+        plt.plot(dayArray, m.dailySun)
+        plt.axis([0, TOTAL_DAYS, 0, 24])
+        plt.xlabel('Day')
+        plt.ylabel('Sunlight (hours)')
+        plt.title('Daily Sun')
+        plt.show()
+
+        plt.plot(dayArray, m.dailyPrecip)
+        plt.axis([0, TOTAL_DAYS, 0, 1])
+        plt.xlabel('Day')
+        plt.ylabel('Precipitation (inches)')
+        plt.title('Daily Precipitation')
+        plt.show()
+
+
+
 m = Model()
 m.initWeather()
-print(m.dailyTemp)
-print(m.dailySun)
-print(m.dailyPrecip)
+m.displayData()
