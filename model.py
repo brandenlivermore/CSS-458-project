@@ -31,10 +31,6 @@ PRECIP_CHANCE = DAYS_WITH_PRECIP / DAYS_IN_MONTH #Chance of precipitation each d
 PRECIP_PER_DAY = AVG_PRECIP / DAYS_WITH_PRECIP #Average precipitation on days that have precipitation, per month
 
 
-#Global Constants
-NUM_YEARS = 1
-MONTHS_PER_YEAR = 12
-
 
 class Model(object):
     """
