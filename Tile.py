@@ -1,3 +1,5 @@
+import environment, tile_actions, animal, day
+
 class Tile(object):
 
     #contants for the state of the land
@@ -24,3 +26,7 @@ class Tile(object):
         self.soil_type = soil_in
         self.environment = eviro_in
         self.well = well_in
+
+    def update(self):
+        if(self.environment.current_day.day in self.environment.teff_seed_date):
+            pass

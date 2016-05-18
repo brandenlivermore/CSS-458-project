@@ -1,4 +1,4 @@
-import tile
+import Tile
 import environment
 
 #################################################################
