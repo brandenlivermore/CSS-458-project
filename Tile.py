@@ -1,5 +1,7 @@
-import environment, tile_actions, animal, day
-from animal import Animal, Wolf, Deer
+import environment, tile_actions, Agents.animal, day
+from Agents.animal import Animal, Wolf, Deer
+import tile_actions
+
 
 class Tile(object):
 

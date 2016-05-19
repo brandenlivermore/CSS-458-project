@@ -1,16 +1,18 @@
-import numpy as N
 import random
 from enum import Enum
+
+from Agents.agent import Agent
+
 
 class AnimalType(Enum):
     predator = 1
     prey = 2
 
-class Animal(object):
-    '''Animal object
+class Animal(Agent):
+    """Animal object
         Base class for all animals
 
-    '''
+    """
     def __init__(self, tile):
         self.speed = 0
         self.energy = 0.0
@@ -110,9 +112,6 @@ class Deer(Animal):
         self.birthRate = 0.0  # offspring per year
 
         # self.objectives = []
-
-    def update(self):
-        pass
 
 class Wolf(Animal):
 
