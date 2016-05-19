@@ -2,6 +2,7 @@ import numpy as N
 import matplotlib.pyplot as plt
 import math
 import random
+from day import Day
 
 #Global Constants
 NUM_YEARS = 1
@@ -43,9 +44,8 @@ class Model(object):
         Initialization of model object
         Calls the initWeather method
         """
-        self.dailyTemp = N.zeros([TOTAL_DAYS])
-        self.dailySun = N.zeros([TOTAL_DAYS])
-        self.dailyPrecip = N.zeros([TOTAL_DAYS])
+        self.days = N.empty([TOTAL_DAYS], dtype=Day)
+
         self.initWeather()
 
     def initWeather(self):
@@ -61,20 +61,23 @@ class Model(object):
             for day in range(0, DAYS_IN_MONTH[month]):
                 cumulativeDay = N.sum(DAYS_IN_MONTH[:month]) + day
                 precip = random.uniform(0,1)
-                if (precip <= PRECIP_CHANCE[month]):
-                    self.dailyPrecip[cumulativeDay] = PRECIP_PER_DAY[month] #Add random variance
-                else:
-                    self.dailyPrecip[cumulativeDay] = 0
+                # if (precip <= PRECIP_CHANCE[month]):
+                #     self.days.rain[cumulativeDay] = PRECIP_PER_DAY[month] #Add random variance
+                # else:
+                #     self.days.rain[cumulativeDay] = 0
                 nextMonth = month + 1
                 if (nextMonth >= 11):
                     nextMonth = 0
                 thisMonthsInfluence = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
                 nextMonthsInfluence = 1 - thisMonthsInfluence
                 avgTemp = (AVG_TEMP[month] * thisMonthsInfluence) + (AVG_TEMP[nextMonth] * nextMonthsInfluence)
-                self.dailyTemp[cumulativeDay] = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
+                temp = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
 
                 avgSun = (SUN_PER_DAY[month] * thisMonthsInfluence) + (SUN_PER_DAY[nextMonth] * nextMonthsInfluence)
-                self.dailySun[cumulativeDay] = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
+                sun = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
+
+                d = Day(cumulativeDay, precip, sun, temp)
+                self.days[cumulativeDay] = d
 
     def displayData(self):
         '''
@@ -84,21 +87,25 @@ class Model(object):
         '''
 
         dayArray = N.arange(0, TOTAL_DAYS)
-        plt.plot(dayArray, m.dailyTemp)
+        temp = [x.temp for x in self.days]
+        sun = [x.sun for x in self.days]
+        rain = [x.rain for x in self.days]
+
+        plt.plot(dayArray, temp)
         plt.axis([0, TOTAL_DAYS, 0, 90])
         plt.xlabel('Day')
         plt.ylabel('Temperature (F)')
         plt.title('Daily Temp')
         plt.show()
 
-        plt.plot(dayArray, m.dailySun)
+        plt.plot(dayArray, sun)
         plt.axis([0, TOTAL_DAYS, 0, 24])
         plt.xlabel('Day')
         plt.ylabel('Sunlight (hours)')
         plt.title('Daily Sun')
         plt.show()
 
-        plt.plot(dayArray, m.dailyPrecip)
+        plt.plot(dayArray, rain)
         plt.axis([0, TOTAL_DAYS, 0, 1])
         plt.xlabel('Day')
         plt.ylabel('Precipitation (inches)')
