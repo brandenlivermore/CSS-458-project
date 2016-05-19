@@ -25,5 +25,16 @@ class Tile(object):
         self.list_animals = []
 
     def update(self):
-        if(self.environment.current_day.day in self.environment.teff_seed_date):
-            pass
+        #checking if the date is a day of the year seeding occurs and that
+        #there is a minium amount of teff to seed adjacent tiles
+        #if yes then seeding adjacent tiles
+        if(self.environment.current_day.day in self.environment.teff_seed_date \
+            and self.teff_mass > self.environment.teff_threshold_acre):
+            tile_actions.seed_tiles(self)
+
+        #checking to make sure that there is teff to grow then calling grow function
+        if(self.teff_mass > 0):
+            tile_actions.water_manage(self)
+
+        #managing the water of the tile
+        tile_actions.teff_grow(self)

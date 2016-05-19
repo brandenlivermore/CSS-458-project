@@ -26,7 +26,7 @@ class Environment(object):
     teff_max_heat = 100 #degrees celsius
     teff_seed_date = [225,175] #day of year teff tests to seed
     max_teff_acre = 16000 #pounds
-    threshold_teff_acre = 177 #pounds
+    teff_threshold_acre = 177 #pounds
     teff_death_chance = .01 #chance teff is wiped out if below threshold
 
     #Resevoir / Well Constants
@@ -85,13 +85,42 @@ class Environment(object):
                 well = False
                 res = False
 
-        def update(self, day_in):
-            self.current_day = day_in
-            self.grid[:,:].update
+    def update(self, day_in):
+        self.current_day = day_in
+        self.grid[:,:].update
 
 
 
     def is_location_valid(self, location):
         return location[0] >= 0 and location[0] < Environment.width \
                and location[1] >= 0 and location[1] < Environment.height
+
+    def get_tile(self, loc):
+        if(self.is_location_valid(loc)):
+            return self.grid[loc[0], loc[1]]
+        else:
+            return None
+
+    def get_adjacent(self, local_in, radius=1):
+        if(isinstance(local_in, Tile)):
+            x = local_in.tile_x
+            y = local_in.tile_y
+        else:
+            x = local_in[0]
+            y = local_in[1]
+
+        possible_cords = []
+
+        for x_i in range(x-radius, x-radius+1):
+            for y_i in range(y-radius, y+radius +1):
+                possible_cords.append([x_i,y_i])
+
+        possible_cords.remove([x,y])
+        tiles_out = []
+
+        for x_i in range(len(possible_cords)):
+            if(self.is_location_valid(possible_cords[x_i])):
+                tiles_out.append(self.grid[possible_cords[0], possible_cords[1]])
+
+        return tiles_out
 
