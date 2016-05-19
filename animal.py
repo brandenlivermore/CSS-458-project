@@ -29,12 +29,18 @@ class Animal(object):
         self.objectives = []
 
     def update(self):
-        #age
-        #perform next step in objective
+        '''
+        Updates the animal by moving it to a random adjacent
+        tile.
 
-        pass
+        Intended to be overridden by subclasses.
 
-    def move(self, environment):
+        :return: None
+        '''
+
+        self.move()
+
+    def move(self):
         '''
         Moves the animal randomly.
 
@@ -43,7 +49,6 @@ class Animal(object):
         location, a new location is chosen. This repeats
         until the animal successfully moves.
 
-        :param environment: the animal's environment
         :return: None
         '''
         x = self.tile.tile_x
@@ -60,7 +65,7 @@ class Animal(object):
 
     def animal_attempt_move(self, location):
         '''
-        Attempts to move the given animal to the given location.
+        Attempts to move the self (an animal) to the given location.
 
         If the location is valid, the animal is moved to the
         new location and the animal is removed from its previous

@@ -38,6 +38,7 @@ class Model(object):
     The main driver for the simulation
     """
     def __init__(self):
+
         """
         Initialization of model object
         Calls the initWeather method
@@ -76,9 +77,12 @@ class Model(object):
                 self.dailySun[cumulativeDay] = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
 
     def displayData(self):
-        """
+        '''
         Displays plots for temperature, sunlight, and precipitation
-        """
+
+        :return: None
+        '''
+
         dayArray = N.arange(0, TOTAL_DAYS)
         plt.plot(dayArray, m.dailyTemp)
         plt.axis([0, TOTAL_DAYS, 0, 90])
