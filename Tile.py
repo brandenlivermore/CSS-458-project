@@ -1,4 +1,5 @@
 import environment, tile_actions, animal, day
+from animal import Animal, Wolf, Deer
 
 class Tile(object):
 
@@ -15,14 +16,16 @@ class Tile(object):
         self.teff_coverage = 0  # percent of the land covered in teff
         self.teff_mass = 0  # mass of teff on land in lbs
 
-        self.well = False  # does a well exist on the tile
 
         self.tree_coverage = 0  # coverage of trees on tile
         self.tree_mass = 0  # mass of trees in lbs
         self.reservoir_volume = 0  # volume of reservoir in gallons
         self.well_volume = 0  # gallons
 
-        self.list_animals = []
+        self.list_animals = [] #animals responsible for tracking themselves
+
+        self.list_objects = {} #list of objects present on tile
+
 
     def update(self):
         #checking if the date is a day of the year seeding occurs and that
@@ -38,3 +41,17 @@ class Tile(object):
 
         #managing the water of the tile
         tile_actions.teff_grow(self)
+
+
+    def add_agent(self, agent_in):
+        self.list_animals.append(agent_in)
+        if(type(agent_in) in self.list_objects):
+            self.list_objects[type(agent_in)] = self.list_objects[type(agent_in)] \
+                + 1
+        else:
+            self.list_objects[type(agent_in)] = 1
+
+    def remove_agent(self, agent_in):
+        self.list_animals.remove(agent_in)
+        self.list_objects[type(agent_in)] = self.list_objects[type(agent_in)] \
+            - 1

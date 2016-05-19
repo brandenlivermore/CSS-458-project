@@ -1,6 +1,7 @@
 import numpy as np
 from animal import Deer, Wolf, Animal
 from tile import Tile
+import math as m
 
 class Environment(object):
 
@@ -136,4 +137,18 @@ class Environment(object):
         return tiles_out
 
 
+    def get_distance(self, cord_1, cord_2):
+        if(isinstance(cord_1, Tile)):
+            x_1 = cord_1.tile_x
+            y_1 = cord_1.tile_y
+        else:
+            x_1 = cord_1[0]
+            y_1 = cord_1[1]
+        if(isinstance(cord_2, Tile)):
+            x_2 = cord_2.tile_x
+            y_2 = cord_2.tile_y
+        else:
+            x_2 = cord_2[0]
+            y_2 = cord_2[1]
 
+        return m.sqrt((x_2-x_1)**2+(y_2-y_1)**2)
