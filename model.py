@@ -14,7 +14,7 @@ Weather data taken from:
     http://www.usclimatedata.com/climate/seattle/washington/united-states/uswa0395
     http://www.seattle.climatemps.com
 """
-AVG_TEMP =          N.array([41.4, 44.2, 46.6, 50,4, 56.1, 61.3, 65.3, 65.7, 60.8, 53.4, 46.2, 41.5]) #Fahrenheit
+AVG_TEMP =          N.array([41.4, 44.2, 46.6, 50.4, 56.1, 61.3, 65.3, 65.7, 60.8, 53.4, 46.2, 41.5]) #Fahrenheit
 AVG_PRECIP =        N.array([5.20, 3.90, 3.31, 1.97, 1.57, 1.42, 0.63, 0.75, 1.65, 3.27, 5.00, 5.43]) #Inches per month
 DAYS_WITH_PRECIP =  N.array([19,   15,   16,   13,   11,   9,    5,    6,    8,    14,   17,   19]) #Days per month
 HOURS_OF_SUN =      N.array([74,   99,   154,  201,  247,  234,  304,  248,  197,  122,  77,   62]) #Hours per month
@@ -43,6 +43,7 @@ class Model(object):
         self.dailyTemp = N.zeros([TOTAL_DAYS])
         self.dailySun = N.zeros([TOTAL_DAYS])
         self.dailyPrecip = N.zeros([TOTAL_DAYS])
+        self.initWeather()
 
     def initWeather(self):
         """
@@ -100,5 +101,4 @@ class Model(object):
 
 
 m = Model()
-m.initWeather()
 m.displayData()
