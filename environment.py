@@ -92,8 +92,19 @@ class Environment(object):
 
 
     def is_location_valid(self, location):
+        '''
+        Returns whether or not the given location is valid (inside
+        of the grid).
+
+        :param location: List of length 2 where index 0 is the
+            x-coordinate and index 1 is the y-coordinate of the
+            location that is to be checked
+        :return: True if the location is inside the grid, False
+            otherwise.
+        '''
         return location[0] >= 0 and location[0] < Environment.width \
                and location[1] >= 0 and location[1] < Environment.height
+
 
     def get_tile(self, loc):
         if(self.is_location_valid(loc)):
@@ -123,4 +134,6 @@ class Environment(object):
                 tiles_out.append(self.grid[possible_cords[0], possible_cords[1]])
 
         return tiles_out
+
+
 

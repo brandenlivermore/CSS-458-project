@@ -29,19 +29,69 @@ class Animal(object):
         self.objectives = []
 
     def update(self):
-        #age
-        #perform next step in objective
+        '''
+        Updates the animal by moving it to a random adjacent
+        tile.
 
-        pass
+        Intended to be overridden by subclasses.
 
-    def move(self, environment):
+        :return: None
+        '''
+
+        self.move()
+
+    def move(self):
+        '''
+        Moves the animal randomly.
+
+        A random location is chosen and the animal
+        attempts to move to it. If it is not a valid
+        location, a new location is chosen. This repeats
+        until the animal successfully moves.
+
+        :return: None
+        '''
         x = self.tile.tile_x
         y = self.tile.tile_y
 
         x_locations = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
         y_locations = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
 
-        random_index = random.randint(7)
+        success = False
+
+        while success is False:
+            random_index = random.randint(len(x_locations) - 1)
+            success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
+
+    def animal_attempt_move(self, location):
+        '''
+        Attempts to move the self (an animal) to the given location.
+
+        If the location is valid, the animal is moved to the
+        new location and the animal is removed from its previous
+        tile and added to the new tile.
+
+        :param location: List of length 2 where index 0 is the
+            x-coordinate and index 1 is the y-coordinate of the
+            desired move location
+        :param animal: The animal that is attempting to move
+        :return: A boolean, True if the move was successful or
+            False otherwise
+        '''
+
+        environment = self.tile.environment
+
+        if not environment.is_location_valid(location):
+            return False
+
+        new_tile = environment.grid[location[0], location[1]]
+        new_tile.list_animals.append(self)
+
+        original_tile = self.tile
+        original_tile.list_animals.remove(self)
+
+        self.tile = new_tile
+        return True
 
 class Deer(Animal):
     '''Deer object
