@@ -35,10 +35,12 @@ PRECIP_PER_DAY = AVG_PRECIP / DAYS_WITH_PRECIP #Average precipitation on days th
 class Model(object):
     """
     Model class
+    The main driver for the simulation
     """
     def __init__(self):
         """
-        Initialization
+        Initialization of model object
+        Calls the initWeather method
         """
         self.dailyTemp = N.zeros([TOTAL_DAYS])
         self.dailySun = N.zeros([TOTAL_DAYS])
@@ -60,6 +62,8 @@ class Model(object):
                 precip = random.uniform(0,1)
                 if (precip <= PRECIP_CHANCE[month]):
                     self.dailyPrecip[cumulativeDay] = PRECIP_PER_DAY[month] #Add random variance
+                else:
+                    self.dailyPrecip[cumulativeDay] = 0
                 nextMonth = month + 1
                 if (nextMonth >= 11):
                     nextMonth = 0
