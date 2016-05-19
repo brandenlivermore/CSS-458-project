@@ -61,10 +61,10 @@ class Model(object):
             for day in range(0, DAYS_IN_MONTH[month]):
                 cumulativeDay = N.sum(DAYS_IN_MONTH[:month]) + day
                 precip = random.uniform(0,1)
-                # if (precip <= PRECIP_CHANCE[month]):
-                #     self.days.rain[cumulativeDay] = PRECIP_PER_DAY[month] #Add random variance
-                # else:
-                #     self.days.rain[cumulativeDay] = 0
+                if (precip <= PRECIP_CHANCE[month]):
+                    precip = PRECIP_PER_DAY[month] #Add random variance
+                else:
+                    precip = 0
                 nextMonth = month + 1
                 if (nextMonth >= 11):
                     nextMonth = 0
@@ -90,7 +90,7 @@ class Model(object):
         temp = [x.temp for x in self.days]
         sun = [x.sun for x in self.days]
         rain = [x.rain for x in self.days]
-
+        print(rain)
         plt.plot(dayArray, temp)
         plt.axis([0, TOTAL_DAYS, 0, 90])
         plt.xlabel('Day')
