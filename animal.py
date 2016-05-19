@@ -12,7 +12,7 @@ class Animal(object):
 
     '''
     def __init__(self, tile):
-        self.speed = 0.0
+        self.speed = 0
         self.energy = 0.0
         self.type = None # See AnimalType enum above, can be predator or prey
         self.age = 0
@@ -54,16 +54,13 @@ class Animal(object):
         x = self.tile.tile_x
         y = self.tile.tile_y
 
-        x_locations = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
-        y_locations = [-1, 0, 1, -1, 0, 1, -1, 0, 1]
+        adjacent_tiles = self.tile.environment.get_adjacent(self.tile, radius=self.speed)
 
-        success = False
+        index = random.randint(len(adjacent_tiles))
 
-        while success is False:
-            random_index = random.randint(len(x_locations) - 1)
-            success = self.environment.animal_attempt_move([x_locations[random_index], y_locations[random_index]], self)
+        self.animal_attempt_move(adjacent_tiles[index])
 
-    def animal_attempt_move(self, location):
+    def animal_attempt_move(self, new_tile):
         '''
         Attempts to move the self (an animal) to the given location.
 
@@ -75,23 +72,17 @@ class Animal(object):
             x-coordinate and index 1 is the y-coordinate of the
             desired move location
         :param animal: The animal that is attempting to move
-        :return: A boolean, True if the move was successful or
-            False otherwise
+        :return: None
         '''
 
         environment = self.tile.environment
 
-        if not environment.is_location_valid(location):
-            return False
-
-        new_tile = environment.grid[location[0], location[1]]
         new_tile.list_animals.append(self)
 
         original_tile = self.tile
         original_tile.list_animals.remove(self)
 
         self.tile = new_tile
-        return True
 
 class Deer(Animal):
     '''Deer object
