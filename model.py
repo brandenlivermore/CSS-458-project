@@ -23,8 +23,8 @@ DAYS_IN_MONTH =     N.array([31,   28,   31,   30,   31,   30,   31,   31,   30,
 DAILY_TEMP_VARIATION = 14 #Fahrenheit
 DAILY_TEMP_STD_DEV = math.sqrt(DAILY_TEMP_VARIATION) #Fahrenheit
 
-DAILY_SUN_VARIATION = 2 #Made up for now
-DAILY_SUN_STD_DEV = math.sqrt(DAILY_SUN_VARIATION)
+DAILY_SUN_VARIATION = 2 #Hours
+DAILY_SUN_STD_DEV = math.sqrt(DAILY_SUN_VARIATION) #Hours
 
 SUN_PER_DAY = HOURS_OF_SUN / DAYS_IN_MONTH #Average hours of sunlight per day for each month
 PRECIP_CHANCE = DAYS_WITH_PRECIP / DAYS_IN_MONTH #Chance of precipitation each day for each month
@@ -53,7 +53,6 @@ class Model(object):
             dailyTemp: Temperature on each day of the year (Fahrenheit)
             dailyPrecip: Precipitation on each day of the year (inches)
             dailySun: Amount of sunlight on each day of the year (hours)
-
         """
         for month in range(0, MONTHS_PER_YEAR):
             for day in range(0, DAYS_IN_MONTH[month]):
@@ -64,12 +63,12 @@ class Model(object):
                 nextMonth = month + 1
                 if (nextMonth >= 11):
                     nextMonth = 0
-                x = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
-                y = 1 - x
-                avgTemp = (AVG_TEMP[month] * x) + (AVG_TEMP[nextMonth] * y)
+                thisMonthsInfluence = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
+                nextMonthsInfluence = 1 - thisMonthsInfluence
+                avgTemp = (AVG_TEMP[month] * thisMonthsInfluence) + (AVG_TEMP[nextMonth] * nextMonthsInfluence)
                 self.dailyTemp[cumulativeDay] = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
 
-                avgSun = (SUN_PER_DAY[month] * x) + (SUN_PER_DAY[nextMonth] * y)
+                avgSun = (SUN_PER_DAY[month] * thisMonthsInfluence) + (SUN_PER_DAY[nextMonth] * nextMonthsInfluence)
                 self.dailySun[cumulativeDay] = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
 
     def displayData(self):
