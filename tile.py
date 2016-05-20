@@ -18,16 +18,13 @@ class Tile(object):
         self.teff_coverage = 0  # percent of the land covered in teff
         self.teff_mass = 0  # mass of teff on land in lbs
 
-
         self.tree_coverage = 0  # coverage of trees on tile
         self.tree_mass = 0  # mass of trees in lbs
         self.reservoir_volume = 0  # volume of reservoir in gallons
         self.well_volume = 0  # gallons
 
         self.list_animals = [] #animals responsible for tracking themselves
-
         self.list_objects = {} #list of objects present on tile
-
 
     def update(self):
         #checking if the date is a day of the year seeding occurs and that
