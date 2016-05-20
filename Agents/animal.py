@@ -2,7 +2,7 @@ import random
 from enum import Enum
 
 from Agents.agent import Agent
-
+# from tile import Tile #err. Just pass in reference to tile obj to inst var
 
 class AnimalType(Enum):
     predator = 1
@@ -10,7 +10,11 @@ class AnimalType(Enum):
 
 class Animal(Agent):
     """Animal object
-        Base class for all animals
+        Base class for all animals.
+
+        Attributes
+        ----------
+        tile : reference to animal's tile in environment
 
     """
     def __init__(self, tile):
@@ -56,7 +60,8 @@ class Animal(Agent):
         x = self.tile.tile_x
         y = self.tile.tile_y
 
-        adjacent_tiles = self.tile.environment.get_adjacent(self.tile, radius=self.speed)
+        adjacent_tiles = self.tile.environment.get_adjacent(self.tile,
+                                                            radius=self.speed)
 
         index = random.randint(len(adjacent_tiles))
 
@@ -85,6 +90,9 @@ class Animal(Agent):
         original_tile.list_animals.remove(self)
 
         self.tile = new_tile
+    def eat(self):
+
+        pass
 
 class Deer(Animal):
     '''Deer object
@@ -112,12 +120,35 @@ class Deer(Animal):
         self.birthRate = 0.0  # offspring per year
 
         # self.objectives = []
+    def eat(self):
+        '''Eat Grass
+        Consumes 'consumptionRate' amt of grass in current tile and records
+        changes in tile's teff_mass variable.
+
+        * if teff_mass is less than 'consumptionRate',
+            [move? Increase hunger?]
+
+        Pre: Deer previously moved to tile with most abundant grass
+
+        :return:
+        '''
+        remainingTeff = self.tile.teff_mass - self.consumptionRate
+        self.tile.teff_mass = min(remainingTeff, 0)
+
+        if (remainingTeff <= 0):
+            #handle starvation
+            pass
+
+        # print ('remainingTeff' + remainingTeff)
+
+### Testing
+# aTile = Tile()
+# aDeer = Deer(aTile)
+# aDeer.eat()
+###
 
 class Wolf(Animal):
 
     def __init__(self, tile):
         super(Wolf, self).__init__(tile)
 
-#testing
-aDeer = Deer()
-print(aDeer.maxAge)
