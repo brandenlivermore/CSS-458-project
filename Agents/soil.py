@@ -13,8 +13,16 @@ class Soil(Agent):
                   SoilType.dirt: .85, SoilType.mud: .95}
 
     #TODO: Alex needs to research
-    soil_max_retention = {SoilType.sandy: 9999, SoilType.rocky: 9999, \
-                          SoilType.dirt: 9999, SoilType.mud: 9999}
+    soil_max_retention = {SoilType.sandy: 1000000, SoilType.rocky: 1000000, \
+                          SoilType.dirt: 1000000, SoilType.mud: 1000000}
+
+    def __init__(self, soil_type):
+        self.soil_type = soil_type
+
+        self.retained_water = 0
 
     def update(self):
         pass
+
+    def get_amount(self):
+        return self.retained_water

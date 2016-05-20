@@ -1,19 +1,30 @@
-import environment, tile_actions, Agents.animal, day
+import numpy as N
+import environment, Agents.animal, day
 from Agents.animal import Animal, Wolf, Deer
-import tile_actions
+from Agents.soil import Soil, SoilType
+from Agents.teff import Teff
+from Agents.drinking_water import DrinkingWater, WaterType
 
 
 class Tile(object):
 
-    def __init__(self, add_reservoir, soil_in, well_in, eviro_in):
-        self.reservoir = add_reservoir # does a reservoir exist on tile
-        self.soil_type = soil_in
+    def __init__(self, soil_in, water_type, eviro_in):
+
         self.environment = eviro_in
-        self.well = well_in
 
         # tile location
         self.tile_x = 0
         self.tile_y = 0
+
+        self.agent_mapping = {}  # list of objects present on tile
+
+        self.priority_agent_types = [Teff, Soil, DrinkingWater]
+
+        soil = Soil(soil_in)
+        self.add_agent(soil)
+
+        if water_type is not WaterType.none:
+            self.add_agent(DrinkingWater(water_type))
 
         self.teff_coverage = 0  # percent of the land covered in teff
         self.teff_mass = 0  # mass of teff on land in lbs
@@ -23,34 +34,33 @@ class Tile(object):
         self.reservoir_volume = 0  # volume of reservoir in gallons
         self.well_volume = 0  # gallons
 
-        self.list_animals = [] #animals responsible for tracking themselves
-        self.list_objects = {} #list of objects present on tile
 
     def update(self):
-        #checking if the date is a day of the year seeding occurs and that
-        #there is a minium amount of teff to seed adjacent tiles
-        #if yes then seeding adjacent tiles
-        if(self.environment.current_day.day in self.environment.teff_seed_date \
-            and self.teff_mass > self.environment.teff_threshold_acre):
-            tile_actions.seed_tiles(self)
+        for priority_agent_type in self.priority_agent_types:
+            if priority_agent_type in self.agent_mapping:
+                self.agent_mapping[priority_agent_type][:].update()
 
-        #checking to make sure that there is teff to grow then calling grow function
-        if(self.teff_mass > 0):
-            tile_actions.water_manage(self)
+        for agent_type in self.agent_mapping:
+            if agent_type in self.priority_agent_types:
+                continue
 
-        #managing the water of the tile
-        tile_actions.teff_grow(self)
-
+            agent_list = self.agent_mapping[agent_type]
+            N.random.shuffle(agent_list)
+            agent_list[:].update()
 
     def add_agent(self, agent_in):
-        self.list_animals.append(agent_in)
-        if(type(agent_in) in self.list_objects):
-            self.list_objects[type(agent_in)] = self.list_objects[type(agent_in)] \
-                + 1
+        if type(agent_in) in self.agent_mapping:
+            self.agent_mapping[type(agent_in)].append(agent_in)
         else:
-            self.list_objects[type(agent_in)] = 1
+            self.agent_mapping[type(agent_in)] = N.array(agent_in)
 
     def remove_agent(self, agent_in):
-        self.list_animals.remove(agent_in)
-        self.list_objects[type(agent_in)] = self.list_objects[type(agent_in)] \
-            - 1
+        if type(agent_in) in self.agent_mapping:
+            self.agent_mapping[type(agent_in)].remove(agent_in)
+
+    def get_agent(self, type):
+        if type in self.agent_mapping and len(self.agent_mapping) > 0:
+            return self.agent_mapping[type][0]
+        else:
+            return None
+

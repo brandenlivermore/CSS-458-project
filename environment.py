@@ -1,6 +1,8 @@
 import numpy as np
 
 from Agents.animal import Deer, Wolf
+from Agents.soil import SoilType
+from Agents.drinking_water import WaterType
 from tile import Tile
 import math as m
 
@@ -12,10 +14,8 @@ class Environment(object):
 #################################################################
 
     #percent chances
-    teff_seed = 0.5 #base chance of seeding adjacent tiles
     chance_reservoir = .02 #chance of tile having resevoir
-    chance_well = .001 #chance of tile having a well
-    tree_seed = .05 #base chance of seeding adjacent tiles
+    chance_well = .001  # chance of tile having a well
 
 #################################################################
 #                    Constructor
@@ -44,18 +44,19 @@ class Environment(object):
         #for managing day
         self.current_day = None
 
-        well = False
-        res = False
+        water_type = WaterType.none
+
         #random array for determining placement of wells and reservoirs
         test_array = np.random.rand(self.height,self.width)
         #filling grid with tiles
         for x in range(self.height):
             for i in range (self.width):
+
                 if(test_array[x,i] < self.chance_well):
-                    well = True
+                    water_type = WaterType.well
                 elif(test_array[x, i] < self.chance_reservoir):
-                    res = True
-                self.grid[x,i] = Tile(res, self.soil_types[1], well, \
+                    water_type = WaterType.reservoir
+                self.grid[x,i] = Tile(res, SoilType.sandy, well, \
                                  self)
                 self.grid[x,i].tile_x = x
                 self.grid[x,i].tile_y = i
