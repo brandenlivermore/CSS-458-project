@@ -17,6 +17,7 @@ class Tile(object):
         self.tile_y = 0
 
         self.agent_mapping = {}  # list of objects present on tile
+        self.agent_weights = {}
 
         self.priority_agent_types = [Teff, Soil, DrinkingWater]
 
@@ -49,18 +50,35 @@ class Tile(object):
             agent_list[:].update()
 
     def add_agent(self, agent_in):
-        if type(agent_in) in self.agent_mapping:
-            self.agent_mapping[type(agent_in)].append(agent_in)
+        type = type(agent_in)
+
+        if type in self.agent_mapping:
+            self.agent_mapping[type].append(agent_in)
         else:
-            self.agent_mapping[type(agent_in)] = N.array(agent_in)
+            self.agent_mapping[type] = N.array(agent_in)
+
+        if type in self.agent_weights:
+            self.agent_weights[type] = \
+                self.agent_weights[type] + agent_in.get_amount()
+        else:
+            self.agent_weights[type] = agent_in.get_amount()
+
 
     def remove_agent(self, agent_in):
-        if type(agent_in) in self.agent_mapping:
-            self.agent_mapping[type(agent_in)].remove(agent_in)
+        type = type(agent_in)
+
+        self.agent_mapping[type].remove(agent_in)
+        self.agent_weights[type] = self.agent_weights[type] - agent_in.get_amount()
+
+    def weight_changed(self, type, difference):
+        self.agent_weights[type] = \
+            self.tile.agent_weights[type] + difference
 
     def get_agent(self, type):
-        if type in self.agent_mapping and len(self.agent_mapping) > 0:
+        if type in self.agent_mapping and len(self.agent_mapping[type]) > 0:
             return self.agent_mapping[type][0]
         else:
             return None
 
+    def get_mass_and_totals(self):
+        for agent_type in self.agent_mapping

@@ -19,10 +19,18 @@ class Teff(Agent):
     
     def __init__(self):
         # for initial test 
-        self.amount = Teff.max_per_acre
+        self.current_weight = Teff.max_per_acre
 
     def update(self):
         pass
 
     def get_amount(self):
-        return self.amount
+        return self.current_weight
+
+    def set_weight(self, new_weight):
+        if new_weight < 0:
+            raise Exception("You cannot do that!")
+
+        difference = new_weight - self.current_weight
+        self.tile.weight_changed(type(self), difference)
+        self.current_weight = new_weight
