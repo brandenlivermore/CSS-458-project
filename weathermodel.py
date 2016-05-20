@@ -5,7 +5,7 @@ import random
 from day import Day
 
 #Global Constants
-NUM_YEARS = 1
+NUM_YEARS = 2
 MONTHS_PER_YEAR = 12
 DAYS_PER_YEAR = 365
 TOTAL_DAYS = NUM_YEARS * DAYS_PER_YEAR
@@ -60,7 +60,7 @@ class weatherModel(object):
         for year in range(0, NUM_YEARS):
             for month in range(0, MONTHS_PER_YEAR):
                 for day in range(0, DAYS_IN_MONTH[month]):
-                    cumulativeDay = N.sum(DAYS_IN_MONTH[:month]) + day
+                    cumulativeDay = (year * DAYS_PER_YEAR) + N.sum(DAYS_IN_MONTH[:month]) + day
                     precip = random.uniform(0,1)
                     if (precip <= PRECIP_CHANCE[month]):
                         precip = PRECIP_PER_DAY[month] #Add random variance
