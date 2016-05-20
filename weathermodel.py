@@ -33,7 +33,7 @@ PRECIP_PER_DAY = AVG_PRECIP / DAYS_WITH_PRECIP #Average precipitation on days th
 
 
 
-class Model(object):
+class weatherModel(object):
     """
     Model class
     The main driver for the simulation
@@ -57,27 +57,28 @@ class Model(object):
             dailyPrecip: Precipitation on each day of the year (inches)
             dailySun: Amount of sunlight on each day of the year (hours)
         """
-        for month in range(0, MONTHS_PER_YEAR):
-            for day in range(0, DAYS_IN_MONTH[month]):
-                cumulativeDay = N.sum(DAYS_IN_MONTH[:month]) + day
-                precip = random.uniform(0,1)
-                if (precip <= PRECIP_CHANCE[month]):
-                    precip = PRECIP_PER_DAY[month] #Add random variance
-                else:
-                    precip = 0
-                nextMonth = month + 1
-                if (nextMonth >= 11):
-                    nextMonth = 0
-                thisMonthsInfluence = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
-                nextMonthsInfluence = 1 - thisMonthsInfluence
-                avgTemp = (AVG_TEMP[month] * thisMonthsInfluence) + (AVG_TEMP[nextMonth] * nextMonthsInfluence)
-                temp = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
+        for year in range(0, NUM_YEARS):
+            for month in range(0, MONTHS_PER_YEAR):
+                for day in range(0, DAYS_IN_MONTH[month]):
+                    cumulativeDay = N.sum(DAYS_IN_MONTH[:month]) + day
+                    precip = random.uniform(0,1)
+                    if (precip <= PRECIP_CHANCE[month]):
+                        precip = PRECIP_PER_DAY[month] #Add random variance
+                    else:
+                        precip = 0
+                    nextMonth = month + 1
+                    if (nextMonth >= 11):
+                        nextMonth = 0
+                    thisMonthsInfluence = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
+                    nextMonthsInfluence = 1 - thisMonthsInfluence
+                    avgTemp = (AVG_TEMP[month] * thisMonthsInfluence) + (AVG_TEMP[nextMonth] * nextMonthsInfluence)
+                    temp = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
 
-                avgSun = (SUN_PER_DAY[month] * thisMonthsInfluence) + (SUN_PER_DAY[nextMonth] * nextMonthsInfluence)
-                sun = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
+                    avgSun = (SUN_PER_DAY[month] * thisMonthsInfluence) + (SUN_PER_DAY[nextMonth] * nextMonthsInfluence)
+                    sun = N.random.normal(avgSun, DAILY_SUN_STD_DEV)
 
-                d = Day(cumulativeDay, precip, sun, temp)
-                self.days[cumulativeDay] = d
+                    d = Day(cumulativeDay, precip, sun, temp)
+                    self.days[cumulativeDay] = d
 
     def displayData(self):
         '''
@@ -112,5 +113,5 @@ class Model(object):
         plt.title('Daily Precipitation')
         plt.show()
 
-m = Model()
+m = weatherModel()
 m.displayData()
