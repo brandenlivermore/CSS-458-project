@@ -11,15 +11,6 @@ class Environment(object):
 #                    Environment Static Variables
 #################################################################
 
-
-
-
-
-
-
-
-
-
     #percent chances
     teff_seed = 0.5 #base chance of seeding adjacent tiles
     chance_reservoir = .02 #chance of tile having resevoir

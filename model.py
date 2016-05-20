@@ -112,7 +112,5 @@ class Model(object):
         plt.title('Daily Precipitation')
         plt.show()
 
-
-
 m = Model()
 m.displayData()
