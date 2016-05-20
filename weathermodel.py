@@ -33,7 +33,7 @@ PRECIP_PER_DAY = AVG_PRECIP / DAYS_WITH_PRECIP #Average precipitation on days th
 
 
 
-class weatherModel(object):
+class WeatherModel(object):
     """
     Model class
     The main driver for the simulation
@@ -113,5 +113,5 @@ class weatherModel(object):
         plt.title('Daily Precipitation')
         plt.show()
 
-m = weatherModel()
+m = WeatherModel()
 m.displayData()
