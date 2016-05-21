@@ -82,39 +82,3 @@ class WeatherModel(object):
 
                     d = Day(cumulativeDay, precip, sun, temp)
                     self.days[cumulativeDay] = d
-
-    def displayData(self):
-        '''
-        Displays plots for temperature, sunlight, and precipitation
-
-        :return: None
-        '''
-
-        dayArray = N.arange(0, self.totalDays)
-        temp = [x.temp for x in self.days]
-        sun = [x.sun for x in self.days]
-        rain = [x.rain for x in self.days]
-        print(rain)
-        plt.plot(dayArray, temp)
-        plt.axis([0, self.totalDays, 0, 90])
-        plt.xlabel('Day')
-        plt.ylabel('Temperature (F)')
-        plt.title('Daily Temp')
-        plt.show()
-
-        plt.plot(dayArray, sun)
-        plt.axis([0, self.totalDays, 0, 24])
-        plt.xlabel('Day')
-        plt.ylabel('Sunlight (hours)')
-        plt.title('Daily Sun')
-        plt.show()
-
-        plt.plot(dayArray, rain)
-        plt.axis([0, self.totalDays, 0, 1])
-        plt.xlabel('Day')
-        plt.ylabel('Precipitation (inches)')
-        plt.title('Daily Precipitation')
-        plt.show()
-
-m = WeatherModel(4)
-m.displayData()

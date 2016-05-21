@@ -1,10 +1,13 @@
 from weathermodel import WeatherModel
-from environment import Environment
+# from environment import Environment
+import matplotlib.pyplot as plt
+import numpy as N
 
 class Driver(object):
     """
     Driver class for simulation
     """
+    weatherModel = WeatherModel(3)
 
     def __init__(self):
         """
@@ -33,7 +36,35 @@ class Driver(object):
 
         Returns
         -------
+        No return
 
         """
-        pass
+        dayArray = N.arange(0, self.weatherModel.totalDays)
+        temp = [x.temp for x in self.weatherModel.days]
+        sun = [x.sun for x in self.weatherModel.days]
+        rain = [x.rain for x in self.weatherModel.days]
+        print(rain)
+        plt.plot(dayArray, temp)
+        plt.axis([0, self.weatherModel.totalDays, 0, 90])
+        plt.xlabel('Day')
+        plt.ylabel('Temperature (F)')
+        plt.title('Daily Temp')
+        plt.show()
 
+        plt.plot(dayArray, sun)
+        plt.axis([0, self.weatherModel.totalDays, 0, 24])
+        plt.xlabel('Day')
+        plt.ylabel('Sunlight (hours)')
+        plt.title('Daily Sun')
+        plt.show()
+
+        plt.plot(dayArray, rain)
+        plt.axis([0, self.weatherModel.totalDays, 0, 1])
+        plt.xlabel('Day')
+        plt.ylabel('Precipitation (inches)')
+        plt.title('Daily Precipitation')
+        plt.show()
+
+
+d = Driver()
+d.visualizeWeather()
