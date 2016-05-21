@@ -1,5 +1,5 @@
 from enum import Enum
-
+from tile import Tile
 from Agents.agent import Agent
 
 
@@ -18,9 +18,10 @@ class DrinkingWater(Agent):
     rez_max_volume = 10000  # in gallons
     well_max_volume = 10000  # in gallons
 
-    def __init__(self, water_type):
+    def __init__(self, water_type, tile_in):
         self.water_type = water_type
         self.current_volume = 0
+        self.my_tile = tile_in
 
     def update(self):
         pass

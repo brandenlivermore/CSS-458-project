@@ -18,7 +18,7 @@ def run_test_1():
     out = Environment(10,10)
     for x in range(10):
         for y in range(10):
-            out.grid[x,y].add_agent(Teff())
+            out.grid[x,y].add_agent(Teff(out.grid[x,y]))
             for w in range(10):
                 out.grid[x,y].add_agent(Deer(out.grid[x,y]))
 

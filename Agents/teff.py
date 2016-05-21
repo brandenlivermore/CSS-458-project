@@ -4,6 +4,7 @@ class Teff(Agent):
 
     #Constants for Teff Grass
     #sourced from http://teffgrass.com/harvesting-teff/
+    precent_water = .12 #amount of teff that is water
     growing_sun = 8.2 #hours a day
     water_consume_acres = 1785 #gallons
     ideal_temp = 63.275 #in degrees celsius
@@ -17,10 +18,11 @@ class Teff(Agent):
     seed = 0.5 #base chance of seeding adjacent tiles
     updates = True
     
-    def __init__(self):
+    def __init__(self, tile_in):
         # for initial test 
         self.current_weight = Teff.max_per_acre
         self.coverage = 1  # percent of the land covered in teff
+        self.my_tile = tile_in
 
     def update(self):
         pass
@@ -33,5 +35,5 @@ class Teff(Agent):
             raise Exception("You cannot do that!")
 
         difference = new_weight - self.current_weight
-        self.tile.weight_changed(type(self), difference)
+        self.my_tile.weight_changed(type(self), difference)
         self.current_weight = new_weight

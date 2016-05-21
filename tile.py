@@ -21,11 +21,11 @@ class Tile(object):
 
         self.priority_agent_types = [Teff, Soil, DrinkingWater]
 
-        soil = Soil(soil_in)
+        soil = Soil(soil_in, self)
         self.add_agent(soil)
 
         if water_type is not WaterType.none:
-            self.add_agent(DrinkingWater(water_type))
+            self.add_agent(DrinkingWater(water_type, self))
 
     def update(self):
         for priority_agent_type in self.priority_agent_types:
