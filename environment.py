@@ -113,6 +113,19 @@ class Environment(object):
 
         return tiles_out
 
+    def agent_moved_to_tile(self, agent, new_tile):
+        '''
+
+        To be called whenever an agent moves. Updates the appropriate
+        tiles.
+
+        :param agent: The agent that is moving
+        :param new_tile: Tile object that the agent is moving to
+        :return: None
+        '''
+        old_tile = agent.tile
+        old_tile.remove_agent(agent)
+        new_tile.add_agent(agent)
 
     def get_distance(self, cord_1, cord_2):
         if(isinstance(cord_1, Tile)):

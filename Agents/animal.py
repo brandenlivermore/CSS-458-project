@@ -2,7 +2,7 @@ import random
 from enum import Enum
 
 from Agents.agent import Agent
-# from tile import Tile #err. Just pass in reference to tile obj to inst var
+from Agents.teff import Teff
 
 class AnimalType(Enum):
     predator = 1
@@ -65,31 +65,8 @@ class Animal(Agent):
 
         index = random.randint(len(adjacent_tiles))
 
-        self.animal_attempt_move(adjacent_tiles[index])
+        self.tile.environment.agent_moved_to_tile(self, adjacent_tiles[index])
 
-    def animal_attempt_move(self, new_tile):
-        '''
-        Attempts to move the self (an animal) to the given location.
-
-        If the location is valid, the animal is moved to the
-        new location and the animal is removed from its previous
-        tile and added to the new tile.
-
-        :param location: List of length 2 where index 0 is the
-            x-coordinate and index 1 is the y-coordinate of the
-            desired move location
-        :param animal: The animal that is attempting to move
-        :return: None
-        '''
-
-        environment = self.tile.environment
-
-        new_tile.list_animals.append(self)
-
-        original_tile = self.tile
-        original_tile.list_animals.remove(self)
-
-        self.tile = new_tile
     def eat(self):
 
         pass
@@ -120,6 +97,22 @@ class Deer(Animal):
         self.birthRate = 0.0  # offspring per year
 
         # self.objectives = []
+    def move(self):
+        tiles = self.tile.environment.get_adjacent(self.tile, self.speed)
+
+        max_tile = None
+
+        # Get tile with the most teff within sight distance
+        for tile in tiles:
+            teff_amount = tile.get_agent(Teff).amount
+
+            if max_tile is None or teff_amount > max_tile.get_amount():
+                max_tile = tile
+
+        if max_tile is not None:
+            self.tile.environment.agent_moved_to_tile(self, max_tile)
+            self.eat()
+
     def eat(self):
         '''Eat Grass
         Consumes 'consumptionRate' amt of grass in current tile and records
@@ -130,22 +123,13 @@ class Deer(Animal):
 
         Pre: Deer previously moved to tile with most abundant grass
 
-        :return:
+        :return: None
         '''
-        remainingTeff = self.tile.teff_mass - self.consumptionRate
-        self.tile.teff_mass = min(remainingTeff, 0)
+        remainingTeff = self.tile.get_agent(Teff).get_amount() - self.consumptionRate
+        self.tile.set_weight = max(remainingTeff, 0)
 
-        if (remainingTeff <= 0):
-            #handle starvation
-            pass
+        #TODO: gain weight? or something. 
 
-        # print ('remainingTeff' + remainingTeff)
-
-### Testing
-# aTile = Tile()
-# aDeer = Deer(aTile)
-# aDeer.eat()
-###
 
 class Wolf(Animal):
 
