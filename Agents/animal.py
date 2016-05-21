@@ -76,6 +76,15 @@ class Animal(Agent):
 
         self.tile.environment.agent_moved_to_tile(self, adjacent_tiles[index])
 
+    def set_weight(self, val):
+        '''Set Deer Weight
+        Updates deer weight and adjusts weight of its tile accordingly
+        :param difference: the amount of weight to be changed
+        '''
+        difference = val - self.weight
+        self.weight = val
+        self.tile.weight_changed(type(self), difference)
+        
     def eat(self):
         pass
 
@@ -155,16 +164,6 @@ class Deer(Animal):
 
         #move deer to tile w/ most teff and set vars
         self.tile.environment.agent_moved_to_tile(self, max_tile)
-
-
-    def set_weight(self, val):
-        '''Set Deer Weight
-        Updates deer weight and adjusts weight of its tile accordingly
-        :param difference: the amount of weight to be changed
-        '''
-        difference = val - self.weight
-        self.weight = val
-        self.tile.weight_changed(type(self), difference)
 
     def eat(self):
         '''Eat Grass
