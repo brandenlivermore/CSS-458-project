@@ -25,7 +25,11 @@ class Teff(Agent):
         self.my_tile = tile_in
 
     def update(self):
-        pass
+        #checking to see if there is no more Teff left to eat
+        #if so removing the object from the tile and deletes self
+        if self.current_weight == 0:
+            self.my_tile.remove_agent(self)
+            del self
 
     def get_amount(self):
         return self.current_weight
