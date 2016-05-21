@@ -98,25 +98,29 @@ class Deer(Animal):
 
         # self.objectives = []
     def move(self):
+
         tiles = self.tile.environment.get_adjacent(self.tile, self.speed)
 
         max_tile = None
 
-        # Get tile with the most teff within sight distance
+        # Get tile with the most Teff within sight distance
         for tile in tiles:
             teff_amount = tile.get_agent(Teff).amount
 
-            if max_tile is None or teff_amount > max_tile.get_amount():
+            if teff_amount is not None and (max_tile is None or teff_amount > max_tile.get_amount()):
                 max_tile = tile
 
         if max_tile is not None:
             self.tile.environment.agent_moved_to_tile(self, max_tile)
             self.eat()
+        else:
+            self.tile.weight_changed(type(self), -1)
+            self.weight -= 1
 
     def eat(self):
         '''Eat Grass
         Consumes 'consumptionRate' amt of grass in current tile and records
-        changes in tile's teff_mass variable.
+        changes in tile's Teff agent.
 
         * if teff_mass is less than 'consumptionRate',
             [move? Increase hunger?]
@@ -125,10 +129,11 @@ class Deer(Animal):
 
         :return: None
         '''
+
         remainingTeff = self.tile.get_agent(Teff).get_amount() - self.consumptionRate
         self.tile.set_weight = max(remainingTeff, 0)
 
-        #TODO: gain weight? or something. 
+        #TODO: gain weight? or something.
 
 
 class Wolf(Animal):
