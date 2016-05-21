@@ -9,7 +9,7 @@ from Agents.teff import Teff
 from Agents.soil import Soil
 from Agents.drinking_water import DrinkingWater
 import math as m
-
+from Agents.ground_water import GroundWater
 
 class Environment(object):
 
@@ -22,7 +22,7 @@ class Environment(object):
     chance_well = .001  # chance of tile having a well
 
     #list of possible agent types
-    agent_types = [Teff, Soil, DrinkingWater, Deer, Wolf]
+    agent_types = [Teff, Soil, DrinkingWater, Deer, Wolf, GroundWater]
 #################################################################
 #                    Constructor
 #################################################################
@@ -32,19 +32,18 @@ class Environment(object):
         for agent in len(self.agent_types):
             self.agent_totals[agent] = [0,0]
 
+        #adding groundwater agent
+        self.my_groundwater = GroundWater()
+
         #variables for environment
         self.teff_total_mass = 0  # in pounds
         self.tree_total_mass = 0  # in pounds
-        self.total_volume_groundwater = 0  # in gallons
 
         # values for storing the grid of tiles
         self.width = 0
         self.height = 0
         self.grid = None
 
-        #values for controlling animals
-        self.total_mass_animal = 0 #in lbs
-        self.animals_alive = {Deer: 0, Wolf: 0}
 
         #setting size of grid and creating grid
         self.height = in_height
