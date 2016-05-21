@@ -38,13 +38,16 @@ class WeatherModel(object):
     Model class
     The main driver for the simulation
     """
-    def __init__(self):
+
+    def __init__(self, numYears=NUM_YEARS):
 
         """
         Initialization of model object
         Calls the initWeather method
         """
-        self.days = N.empty([TOTAL_DAYS], dtype=Day)
+        self.totalDays = numYears * DAYS_PER_YEAR
+        self.numYears = numYears
+        self.days = N.empty([self.totalDays], dtype=Day)
 
         self.initWeather()
 
@@ -57,7 +60,7 @@ class WeatherModel(object):
             dailyPrecip: Precipitation on each day of the year (inches)
             dailySun: Amount of sunlight on each day of the year (hours)
         """
-        for year in range(0, NUM_YEARS):
+        for year in range(0, self.numYears):
             for month in range(0, MONTHS_PER_YEAR):
                 for day in range(0, DAYS_IN_MONTH[month]):
                     cumulativeDay = (year * DAYS_PER_YEAR) + N.sum(DAYS_IN_MONTH[:month]) + day
@@ -87,31 +90,31 @@ class WeatherModel(object):
         :return: None
         '''
 
-        dayArray = N.arange(0, TOTAL_DAYS)
+        dayArray = N.arange(0, self.totalDays)
         temp = [x.temp for x in self.days]
         sun = [x.sun for x in self.days]
         rain = [x.rain for x in self.days]
         print(rain)
         plt.plot(dayArray, temp)
-        plt.axis([0, TOTAL_DAYS, 0, 90])
+        plt.axis([0, self.totalDays, 0, 90])
         plt.xlabel('Day')
         plt.ylabel('Temperature (F)')
         plt.title('Daily Temp')
         plt.show()
 
         plt.plot(dayArray, sun)
-        plt.axis([0, TOTAL_DAYS, 0, 24])
+        plt.axis([0, self.totalDays, 0, 24])
         plt.xlabel('Day')
         plt.ylabel('Sunlight (hours)')
         plt.title('Daily Sun')
         plt.show()
 
         plt.plot(dayArray, rain)
-        plt.axis([0, TOTAL_DAYS, 0, 1])
+        plt.axis([0, self.totalDays, 0, 1])
         plt.xlabel('Day')
         plt.ylabel('Precipitation (inches)')
         plt.title('Daily Precipitation')
         plt.show()
 
-m = WeatherModel()
+m = WeatherModel(4)
 m.displayData()
