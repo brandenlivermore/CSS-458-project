@@ -1,9 +1,13 @@
 import numpy as np
+from copy import deepcopy
 
 from Agents.animal import Deer, Wolf
 from Agents.soil import SoilType
 from Agents.drinking_water import WaterType
 from tile import Tile
+from Agents.teff import Teff
+from Agents.soil import Soil
+from Agents.drinking_water import DrinkingWater
 import math as m
 
 
@@ -17,10 +21,17 @@ class Environment(object):
     chance_reservoir = .02 #chance of tile having resevoir
     chance_well = .001  # chance of tile having a well
 
+    #list of possible agent types
+    agent_types = [Teff, Soil, DrinkingWater, Deer, Wolf]
 #################################################################
 #                    Constructor
 #################################################################
     def __init__(self, in_width, in_height):
+        #building the total count and weight dictionary
+        self.agent_totals = {}
+        for agent in len(self.agent_types):
+            self.agent_totals[agent] = [0,0]
+
         #variables for environment
         self.teff_total_mass = 0  # in pounds
         self.tree_total_mass = 0  # in pounds
@@ -66,6 +77,7 @@ class Environment(object):
     def update(self, day_in):
         self.current_day = day_in
         self.grid[:,:].update
+        return deepcopy(self.agent_totals)
 
 
 

@@ -4,7 +4,7 @@ from Agents.animal import Animal, Wolf, Deer
 from Agents.soil import Soil, SoilType
 from Agents.teff import Teff
 from Agents.drinking_water import DrinkingWater, WaterType
-
+from copy import deepcopy
 
 class Tile(object):
 
@@ -26,15 +26,6 @@ class Tile(object):
 
         if water_type is not WaterType.none:
             self.add_agent(DrinkingWater(water_type))
-
-        self.teff_coverage = 0  # percent of the land covered in teff
-        self.teff_mass = 0  # mass of teff on land in lbs
-
-        self.tree_coverage = 0  # coverage of trees on tile
-        self.tree_mass = 0  # mass of trees in lbs
-        self.reservoir_volume = 0  # volume of reservoir in gallons
-        self.well_volume = 0  # gallons
-
 
     def update(self):
         for priority_agent_type in self.priority_agent_types:
@@ -63,16 +54,22 @@ class Tile(object):
         else:
             self.agent_weights[type] = agent_in.get_amount()
 
+        self.environment.agent_totals[type] = [self.environment.agent_totals[type][0] + 1, \
+            self.environment.agent_totals[type][1] + agent_in.get_amount()]
 
     def remove_agent(self, agent_in):
         type = type(agent_in)
 
         self.agent_mapping[type].remove(agent_in)
         self.agent_weights[type] = self.agent_weights[type] - agent_in.get_amount()
+        self.environment.agent_totals[type] = [self.environment.agent_totals[type][0] -1, \
+            self.environment.agent_totals[type][1] - agent_in.get_amount()]
 
     def weight_changed(self, type, difference):
         self.agent_weights[type] = \
             self.tile.agent_weights[type] + difference
+        self.environment.agent_totals[type][1] = self.environment.agent_totals[type]\
+            [1] + difference
 
     def get_agent(self, type):
         if type in self.agent_mapping and len(self.agent_mapping[type]) > 0:
@@ -81,4 +78,8 @@ class Tile(object):
             return None
 
     def get_mass_and_totals(self):
-        for agent_type in self.agent_mapping
+        out_values = deepcopy(self.agent_weights)
+        for agent_type in self.out_values:
+                out_values[agent_type] = [len(self.agent_mapping[agent_type]),\
+                                          self.agent_weights[agent_type]]
+        return out_values

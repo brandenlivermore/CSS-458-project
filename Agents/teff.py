@@ -20,6 +20,7 @@ class Teff(Agent):
     def __init__(self):
         # for initial test 
         self.current_weight = Teff.max_per_acre
+        self.coverage = 1  # percent of the land covered in teff
 
     def update(self):
         pass
