@@ -33,17 +33,35 @@ class Driver(object):
         """
 
         ##########################################################################################
-        #The code between these two blocks may not work correctly
+        #The code between these two blocks does not work yet
         # Trying to create 2D array with number of columns equal to tupleList length where
         # the length of each row is the number of days in each simulation
 
+        #######
+        # Using the logic from this code:
+
+        # listOfData = []
+        # numSimulations = 6
+        # daysPerSimulation = range(numSimulations)
+        # daysPerSimulation = [x + 1 for x in daysPerSimulation]
+        # for i in range(numSimulations):
+        #     length = daysPerSimulation[i]
+        #     data = [([0] * length)]
+        #     listOfData.append(data)
+        #
+        # for row in listOfData:
+        #     print(row)
+
+        #######
         a = [x[0] for x in tupleList]  # a is list of weather objects from tupleList
         daysPerSimulation = [x.totalDays for x in a] # daysPerSimulation is a list of the length of each simulation
         numSimulations = len(tupleList) # the number of different simulations to be run
+        listOfData = []
         data = [] #List to hold all data from all simulations
         for i in range(numSimulations):
             length = daysPerSimulation[i]
-            data.append([0] * length)
+            data = [([0] * length)]
+            listOfData.append(data)
 
         for i in range(0, len(tupleList)):
             weather, environ = tupleList[i]
