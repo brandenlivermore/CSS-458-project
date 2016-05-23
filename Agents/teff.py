@@ -4,6 +4,7 @@ from environment import Environment
 from day import Day
 import random as random
 from Agents.soil import Soil
+import numpy as np
 
 class Teff(Agent):
 
@@ -27,7 +28,7 @@ class Teff(Agent):
     
     def __init__(self, tile_in):
         # for initial test 
-        self.current_weight = Teff.max_per_acre
+        self.current_weight = self.threshold_acre
         self.coverage = 1  # percent of the land covered in teff
         self.my_tile = tile_in
 
@@ -40,7 +41,7 @@ class Teff(Agent):
         if self.current_weight == 0:
             self.my_tile.remove_agent(self)
             del self
-        ##checking if teff is in danger of desicating thn
+        ##checking if teff is in danger of desicating then
         elif self.current_weight <= self.threshold_acre:
             if random() <= self.death_chance:
                 self.my_tile.remove_agent(self)
@@ -72,6 +73,14 @@ class Teff(Agent):
             else:
                 amount_lost = random.uniform(0, 0.2)
                 self.set_weight(self.current_weight * (1 - amount_lost))
+            #doing seeding if the day of the year is the seed day
+            if self.my_tile.environment.current_day.day in self.seed_date and \
+                    self.current_weight > self.threshold_acre:
+                to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
+                will_seed = np.random.random(len(to_seed))
+                for x in range(len(to_seed)):
+                    if will_seed[x] <= self.seed:
+                        to_seed[x].add_agent(Teff(to_seed[x]))
 
 
 
