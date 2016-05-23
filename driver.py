@@ -1,5 +1,5 @@
 from weathermodel import WeatherModel
-# from environment import Environment
+from environment import Environment
 import matplotlib.pyplot as plt
 import numpy as N
 
@@ -13,60 +13,33 @@ class Driver(object):
         """
         Initialize the simulation driver
         """
-        self.agent_totals = {}
-        for agent in len(self.agent_types):
-            self.agent_totals[agent] = [0,0]
-        pass
+        self.daily_totals = []
 
 
-    def runSimulation(self, tupleList):
-        """
-        Parameters
-        ----------
-        tupleList
-            A list of tuples, with corresponding weather model and environment objects
+
+    def runSimulation(self, tuple_list):
+        '''
+
+        :param tuple_list: A list of tuples, with corresponding weather model and environment objects
             Calls the update method on the environment for each day of the simulation.
             The weather object's day properties are passed into the environment update method
-
             tupleList[0] is weather objects
             tupleList[1] is environment objects
-        """
+        :return: daily_totals
+        '''
 
-        ##########################################################################################
-        #The code between these two blocks does not work yet
-        # Trying to create 2D array with number of columns equal to tupleList length where
-        # the length of each row is the number of days in each simulation
 
-        #######
-        # Using the logic from this code:
+        for current_tuple in tuple_list:
+            weather_model = current_tuple[0]
+            environment = current_tuple[1]
+            run_output = []
+            for day in weather_model.days:
+                run_output.append(environment.update(day))
 
-        # listOfData = []
-        # numSimulations = 6
-        # daysPerSimulation = range(numSimulations)
-        # daysPerSimulation = [x + 1 for x in daysPerSimulation]
-        # for i in range(numSimulations):
-        #     length = daysPerSimulation[i]
-        #     data = [([0] * length)]
-        #     listOfData.append(data)
-        #
-        # for row in listOfData:
-        #     print(row)
+            self.daily_totals.append(run_output)
 
-        #######
-        a = [x[0] for x in tupleList]  # a is list of weather objects from tupleList
-        daysPerSimulation = [x.totalDays for x in a] # daysPerSimulation is a list of the length of each simulation
-        numSimulations = len(tupleList) # the number of different simulations to be run
-        listOfData = []
-        data = [] #List to hold all data from all simulations
-        for i in range(numSimulations):
-            length = daysPerSimulation[i]
-            data = [([0] * length)]
-            listOfData.append(data)
 
-        for i in range(0, len(tupleList)):
-            weather, environ = tupleList[i]
-            for day in range(0, len(weather.days)):
-                data[i, day] = environ.update(weather[day])
+        return self.daily_totals
         ##########################################################################################
 
 
