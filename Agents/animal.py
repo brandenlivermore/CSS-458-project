@@ -9,6 +9,7 @@ from Agents.teff import Teff
 class AnimalType(Enum):
     predator = 1
     prey = 2
+    ominvore = 3
 
 class State(Enum):
     dead = 0
