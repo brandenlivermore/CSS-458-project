@@ -13,10 +13,8 @@ class Driver(object):
         """
         Initialize the simulation driver
         """
-        self.agent_totals = {}
-        for agent in len(self.agent_types):
-            self.agent_totals[agent] = [0,0]
-        pass
+        self.daily_totals = []
+
 
 
     def runSimulation(self, tupleList):
@@ -69,6 +67,8 @@ class Driver(object):
                 data[i, day] = environ.update(weather[day])
         ##########################################################################################
 
+    def visualizeEnvironmentTotals(self):
+        pass
 
     def visualizeWeather(self):
         """
@@ -83,25 +83,28 @@ class Driver(object):
         sun = [x.sun for x in self.weatherModel.days]
         rain = [x.rain for x in self.weatherModel.days]
         print(rain)
+        plt.subplot(3, 1, 1)
         plt.plot(dayArray, temp)
         plt.axis([0, self.weatherModel.totalDays, 0, 90])
         plt.xlabel('Day')
         plt.ylabel('Temperature (F)')
         plt.title('Daily Temp')
-        plt.show()
 
+        plt.subplot(3, 1, 2)
         plt.plot(dayArray, sun)
         plt.axis([0, self.weatherModel.totalDays, 0, 24])
         plt.xlabel('Day')
         plt.ylabel('Sunlight (hours)')
         plt.title('Daily Sun')
-        plt.show()
 
+        plt.subplot(3, 1, 3)
         plt.plot(dayArray, rain)
         plt.axis([0, self.weatherModel.totalDays, 0, 1])
         plt.xlabel('Day')
         plt.ylabel('Precipitation (inches)')
         plt.title('Daily Precipitation')
+
+        plt.tight_layout()
         plt.show()
 
 
