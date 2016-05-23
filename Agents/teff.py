@@ -83,7 +83,7 @@ class Teff(Agent):
                         to_seed[x].add_agent(Teff(to_seed[x]))
 
 
-
+zx
 
     def get_amount(self):
         return self.current_weight
