@@ -9,6 +9,7 @@ from Agents.teff import Teff
 class AnimalType(Enum):
     predator = 1
     prey = 2
+    ominvore = 3
 
 class State(Enum):
     dead = 0
@@ -84,6 +85,10 @@ class Animal(Agent):
         difference = val - self.weight
         self.weight = val
         self.tile.weight_changed(type(self), difference)
+
+    def remove(self):
+        self.tile.remove_agent(self)
+        del self
         
     def eat(self):
         pass
@@ -98,8 +103,13 @@ class Deer(Animal):
         https://www.michigan.gov/dnr/0,4570,7-153-10370_12150_12220-26946--,00.html
         http://www.desertusa.com/animals/white-tail-tdeer.html
     '''
+    TOTAL_DEER = 0
+
     def __init__(self, tile):
         super(Deer, self).__init__(tile)
+
+        Deer.TOTAL_DEER += 1
+
         self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
         self.type = AnimalType.prey
         self.age = 0.0
@@ -116,6 +126,7 @@ class Deer(Animal):
         self.weight = self.max_weight = random.uniform(110, 300) #lbs
         self.gestationPeriod = 7 #months pregnant
         self.matingSeasons = ["May","June"]
+        self.female_ratio = 0.66
 
         self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
         self.birthRate = 0.0  # offspring per year
@@ -130,20 +141,17 @@ class Deer(Animal):
     def update(self):
         '''Update Deer
         '''
-        if (self.state == 'Alive'): # deer alive
+        if (self.state == 'alive'): # deer alive
             print("Update deer alive")
             self.move()
             self.eat()
             #TODO: once a year, spawn new deer all at once
             # self.reproduce()
-        elif (self.state == 'Dead'):
+        elif (self.state == 'dead'):
             print("Update deer dead") # deer dead
             self.days_deceased += 1
             if self.days_deceased >= self.days_to_decompose:
-                #TODO: remove deer from environment, delete deer.
-                self.set_weight(0) #remove deer weight from tile
-                #Delete self, remove deer from any lists
-                pass
+                self.remove()
 
     def move(self):
         '''Move Deer
@@ -164,6 +172,11 @@ class Deer(Animal):
 
         #move deer to tile w/ most teff and set vars
         self.tile.environment.agent_moved_to_tile(self, max_tile)
+
+    def remove(self):
+        self.tile.remove_agent(self)
+        del self
+        Deer.TOTAL_DEER -= 1
 
     def eat(self):
         '''Eat Grass
@@ -235,6 +248,11 @@ class Deer(Animal):
 
         :return: None
         '''
+        # get single birthing day (rand mating season time + gestation period)
+
+        # take female population (whole * female_ratio)
+        # give each a chance to birth 1-4 babies
+        # place children on empty squares (or just same tile?)
 
 
 class Wolf(Animal):
