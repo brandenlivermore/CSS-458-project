@@ -1,7 +1,7 @@
-from weathermodel import WeatherModel
-from environment import Environment
 import matplotlib.pyplot as plt
 import numpy as N
+from weathermodel import WeatherModel
+
 
 class Driver(object):
     """

@@ -1,11 +1,9 @@
-from Agents.agent import Agent
 from enum import Enum
-from environment import Environment
-from tile import Tile
-from day import Day
-import math as m
-from Agents.drinking_water import DrinkingWater
-from Agents.ground_water import GroundWater
+
+import src.Agents.drinking_water
+
+from src.Agents.agent import Agent
+
 
 class SoilType(Enum):
     sandy = 1
@@ -49,21 +47,25 @@ class Soil(Agent):
         #the type of soil
         my_type = self.soil_type
         #the amount of gallons of precipitation
-        rainfall_gallons = (self.my_tile.environment.current_day.rain_in \
+        rainfall_gallons = (self.my_tile.environment.current_day.rain \
             * self.square_inches_acres * self.cubic_inches_to_gallons)
+
         #the amount of water theoretically retained by the soil_agent
         retention = self.soil_retention[my_type] * rainfall_gallons
+
         #the amount of runoff in the soil
-        self.runoff = (1 - self.soil_max_retention[my_type] * rainfall_gallons) \
+        self.runoff = (1 - self.soil_retention[my_type] * rainfall_gallons) \
             + ((self.retained_water + retention) % self.soil_max_retention[my_type])
+
         #changing the amount of water in the soil and updating tile
-        new_volume = max[self.soil_max_retention[my_type], \
-            self.retained_water + retention]
+        new_volume = max(self.soil_max_retention[my_type], \
+            self.retained_water + retention)
         difference = new_volume - self.retained_water
         self.my_tile.weight_changed(type(self), difference)
         self.retained_water = new_volume
+
         #updating ground water or passing the job up for the water feature to handle
-        if self.my_tile.get_agent(DrinkingWater) == None:
+        if self.my_tile.get_agent(src.Agents.drinking_water.DrinkingWater) == None:
             old_gw = self.my_tile.environment.my_groundwater.get_amount()
             self.my_tile.environment.my_groundwater.set_weight(self.runoff + old_gw)
         else:

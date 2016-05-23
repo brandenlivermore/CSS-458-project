@@ -1,8 +1,9 @@
-import numpy as N
-import matplotlib.pyplot as plt
 import math
 import random
-from day import Day
+
+import numpy as N
+
+from src.day import Day
 
 #Global Constants
 NUM_YEARS = 2

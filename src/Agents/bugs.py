@@ -1,7 +1,4 @@
-from Agents.animal import Animal, AnimalType
-from environment import Environment
-from tile import Tile
-from day import Day
+from src.Agents.animal import Animal
 
 
 class Bugs(Animal):

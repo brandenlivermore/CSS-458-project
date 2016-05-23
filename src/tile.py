@@ -1,10 +1,11 @@
-import numpy as N
-import environment, Agents.animal, day
-from Agents.animal import Animal, Wolf, Deer
-from Agents.soil import Soil, SoilType
-from Agents.teff import Teff
-from Agents.drinking_water import DrinkingWater, WaterType
 from copy import deepcopy
+
+import numpy as N
+from src.Agents.drinking_water import DrinkingWater, WaterType
+from src.Agents.teff import Teff
+
+from src.Agents.soil import Soil
+
 
 class Tile(object):
 
@@ -30,7 +31,8 @@ class Tile(object):
     def update(self):
         for priority_agent_type in self.priority_agent_types:
             if priority_agent_type in self.agent_mapping:
-                self.agent_mapping[priority_agent_type][:].update()
+                for agent in self.agent_mapping[priority_agent_type]:
+                    agent.update()
 
         for agent_type in self.agent_mapping:
             if agent_type in self.priority_agent_types:
@@ -38,24 +40,25 @@ class Tile(object):
 
             agent_list = self.agent_mapping[agent_type]
             N.random.shuffle(agent_list)
-            agent_list[:].update()
+
+            for agent in agent_list:
+                agent.update()
 
     def add_agent(self, agent_in):
-        type = type(agent_in)
+        agent_type = type(agent_in)
 
-        if type in self.agent_mapping:
-            self.agent_mapping[type].append(agent_in)
+        if agent_type in self.agent_mapping:
+            N.append(self.agent_mapping[agent_type], agent_in)
         else:
-            self.agent_mapping[type] = N.array(agent_in)
-
-        if type in self.agent_weights:
-            self.agent_weights[type] = \
-                self.agent_weights[type] + agent_in.get_amount()
+            self.agent_mapping[agent_type] = N.array([agent_in])
+        if agent_type in self.agent_weights:
+            self.agent_weights[agent_type] = \
+                self.agent_weights[agent_type] + agent_in.get_amount()
         else:
-            self.agent_weights[type] = agent_in.get_amount()
+            self.agent_weights[agent_type] = agent_in.get_amount()
 
-        self.environment.agent_totals[type] = [self.environment.agent_totals[type][0] + 1, \
-            self.environment.agent_totals[type][1] + agent_in.get_amount()]
+        self.environment.agent_totals[agent_type] = [self.environment.agent_totals[agent_type][0] + 1, \
+            self.environment.agent_totals[agent_type][1] + (agent_in.get_amount() / 1000.0)]
 
     def remove_agent(self, agent_in):
         type = type(agent_in)
@@ -63,17 +66,17 @@ class Tile(object):
         self.agent_mapping[type].remove(agent_in)
         self.agent_weights[type] = self.agent_weights[type] - agent_in.get_amount()
         self.environment.agent_totals[type] = [self.environment.agent_totals[type][0] -1, \
-            self.environment.agent_totals[type][1] - agent_in.get_amount()]
+            self.environment.agent_totals[type][1] - (agent_in.get_amount() / 1000.0)]
 
     def weight_changed(self, type, difference):
         self.agent_weights[type] = \
-            self.tile.agent_weights[type] + difference
+            self.agent_weights[type] + difference
         self.environment.agent_totals[type][1] = self.environment.agent_totals[type]\
-            [1] + difference
+            [1] + (difference / 1000.0)
 
     def get_agent(self, type):
-        if type in self.agent_mapping and len(self.agent_mapping[type]) > 0:
-            return self.agent_mapping[type][0]
+        if type in self.agent_mapping and self.agent_mapping[type].size > 0:
+                return self.agent_mapping[type][0]
         else:
             return None
 

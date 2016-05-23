@@ -1,3 +1,4 @@
+
 ##################################################################
 #                       TEST ONE
 ##################################################################
@@ -8,13 +9,13 @@
 #               deer will starve and die
 #               two predictable extinction events
 
-from environment import Environment
-from tile import Tile
-from Agents.teff import Teff
-from Agents.animal import Deer
-import numpy as np
+from src.Agents.teff import Teff
 from driver import Driver
 from weathermodel import WeatherModel
+
+from src.Agents.animal import Deer
+from src.environment import Environment
+
 
 def run_test_1():
 
@@ -31,6 +32,12 @@ def run_test_1():
 
     driver = Driver()
     weather = WeatherModel(numYears=1)
-    driver.runSimulation([(weather, environment)])
+    result = driver.runSimulation([(weather, environment)])[0]
+    for day_dict in result:
+        print("new day!!!")
+        for key in day_dict:
+            print("Agent type: " + str(key) + ", count: " + str(day_dict[key][0]) + ", weight: " + str(day_dict[key][1]) + " thousand pounds")
 
+        print("Day end!!! \n\n\n\n\n")
     
+run_test_1()

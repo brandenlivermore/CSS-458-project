@@ -1,9 +1,12 @@
-import numpy as N
 import random
 from enum import Enum
 
-from Agents.agent import Agent
-from Agents.teff import Teff
+import numpy as N
+from src.Agents.teff import Teff
+
+from src.Agents.agent import Agent
+
+
 # from tile import Tile #err. Just pass in reference to tile obj to inst var
 
 class AnimalType(Enum):
@@ -85,6 +88,8 @@ class Animal(Agent):
         difference = val - self.weight
         self.weight = val
         self.tile.weight_changed(type(self), difference)
+    def get_amount(self):
+        return self.weight
 
     def remove(self):
         self.tile.remove_agent(self)

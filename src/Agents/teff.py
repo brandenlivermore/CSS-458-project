@@ -1,10 +1,10 @@
-from Agents.agent import Agent
-from tile import Tile
-from environment import Environment
-from day import Day
 import random as random
-from Agents.soil import Soil
+
 import numpy as np
+from src.Agents.soil import Soil
+
+from src.Agents.agent import Agent
+
 
 class Teff(Agent):
 

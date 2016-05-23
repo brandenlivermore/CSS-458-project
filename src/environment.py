@@ -1,15 +1,17 @@
-import numpy as np
+import math as m
 from copy import deepcopy
 
-from Agents.animal import Deer, Wolf
-from Agents.soil import SoilType
-from Agents.drinking_water import WaterType
-from tile import Tile
-from Agents.teff import Teff
-from Agents.soil import Soil
-from Agents.drinking_water import DrinkingWater
-import math as m
-from Agents.ground_water import GroundWater
+import numpy as N
+from src.Agents.drinking_water import DrinkingWater
+from src.Agents.drinking_water import WaterType
+from src.Agents.ground_water import GroundWater
+from src.Agents.soil import Soil
+from src.Agents.soil import SoilType
+from src.Agents.teff import Teff
+
+from src.Agents.animal import Deer, Wolf
+from src.tile import Tile
+
 
 class Environment(object):
 
@@ -29,11 +31,11 @@ class Environment(object):
     def __init__(self, in_width, in_height):
         #building the total count and weight dictionary
         self.agent_totals = {}
-        for agent in len(self.agent_types):
+        for agent in self.agent_types:
             self.agent_totals[agent] = [0,0]
 
         #adding groundwater agent
-        self.my_groundwater = GroundWater()
+        self.my_groundwater = GroundWater(enviro_in=self)
 
         #variables for environment
         self.teff_total_mass = 0  # in pounds
@@ -48,7 +50,7 @@ class Environment(object):
         #setting size of grid and creating grid
         self.height = in_height
         self.width = in_width
-        self.grid = np.empty([self.height,self.width], dtype=Tile)
+        self.grid = N.empty([self.height,self.width], dtype=Tile)
 
 
         #for managing day
@@ -57,7 +59,7 @@ class Environment(object):
         water_type = WaterType.none
 
         #random array for determining placement of wells and reservoirs
-        test_array = np.random.rand(self.height,self.width)
+        test_array = N.random.rand(self.height,self.width)
         #filling grid with tiles
         for x in range(self.height):
             for i in range (self.width):
@@ -66,7 +68,7 @@ class Environment(object):
                     water_type = WaterType.well
                 elif(test_array[x, i] < self.chance_reservoir):
                     water_type = WaterType.reservoir
-                self.grid[x,i] = Tile(res, SoilType.sandy, well, \
+                self.grid[x,i] = Tile(SoilType.sandy, water_type, \
                                  self)
                 self.grid[x,i].tile_x = x
                 self.grid[x,i].tile_y = i
@@ -75,7 +77,10 @@ class Environment(object):
 
     def update(self, day_in):
         self.current_day = day_in
-        self.grid[:,:].update
+
+        for tile in N.ndenumerate(self.grid):
+            tile[1].update()
+        #self.grid[:,:].update()
         return deepcopy(self.agent_totals)
 
 

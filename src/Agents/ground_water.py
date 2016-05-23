@@ -1,5 +1,5 @@
-from Agents.agent import Agent
-from environment import Environment
+from src.Agents.agent import Agent
+
 
 class GroundWater(Agent):
 
