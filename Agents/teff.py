@@ -82,9 +82,6 @@ class Teff(Agent):
                     if will_seed[x] <= self.seed:
                         to_seed[x].add_agent(Teff(to_seed[x]))
 
-
-zx
-
     def get_amount(self):
         return self.current_weight
 
