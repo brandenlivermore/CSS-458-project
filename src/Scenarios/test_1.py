@@ -15,11 +15,13 @@ from weathermodel import WeatherModel
 
 from src.Agents.animal import Deer
 from src.environment import Environment
+import matplotlib.pyplot as plt
+import numpy as N
 
 
 def run_test_1():
 
-    Teff.threshold_acre = 1000
+    Teff.threshold_acre = 10000
     Teff.updates = False
 
     environment = Environment(20,20)
@@ -32,6 +34,8 @@ def run_test_1():
     driver = Driver()
     weather = WeatherModel(numYears=1)
     result = driver.runSimulation([(weather, environment)])[0]
+
+
     for i in range(len(result)):
         day_dict = result[i]
         print("new day!!!")
@@ -44,5 +48,30 @@ def run_test_1():
             print("Agent type: " + str(key) + ", count: " + str(day_dict[key][0]) + ", weight: " + str(day_dict[key][1]) + " thousand pounds")
 
         print("Day end!!! \n\n\n\n\n")
+
+    days = N.arange(365)
+    deer_count = [day[Deer][0] for day in result]
+    print(deer_count)
+    teff_count = [day[Teff][1] for day in result]
+    print(teff_count)
+
+    plt.subplot(2, 1, 1)
+    plt.plot(days, deer_count)
+    plt.xlabel('Day')
+    plt.ylabel('Deer count')
+    plt.axis([0, len(days), -10, 1200])
+    plt.title('Deer count by day')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(days, teff_count)
+    plt.xlabel('Day')
+    plt.ylabel('Thousands of pounds of teff')
+    plt.axis([0, len(days), -10, 1200])
+    plt.title('Teff weight by day')
+
+    plt.tight_layout()
+
+    plt.show()
+
     
 run_test_1()
