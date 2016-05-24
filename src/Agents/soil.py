@@ -54,12 +54,15 @@ class Soil(Agent):
         retention = self.soil_retention[my_type] * rainfall_gallons
 
         #the amount of runoff in the soil
-        self.runoff = (1 - self.soil_retention[my_type] * rainfall_gallons) \
-            + ((self.retained_water + retention) % self.soil_max_retention[my_type])
+        self.runoff = (1 - self.soil_retention[my_type]) * rainfall_gallons
+        if retention + self.retained_water > self.soil_max_retention[my_type]:
+            self.runoff += (retention + self.retained_water - self.soil_max_retention[my_type])
 
         #changing the amount of water in the soil and updating tile
-        new_volume = max(self.soil_max_retention[my_type], \
+        new_volume = min(self.soil_max_retention[my_type], \
             self.retained_water + retention)
+
+
         difference = new_volume - self.retained_water
         self.my_tile.weight_changed(type(self), difference)
         self.retained_water = new_volume
@@ -68,8 +71,6 @@ class Soil(Agent):
         if self.my_tile.get_agent(src.Agents.drinking_water.DrinkingWater) == None:
             old_gw = self.my_tile.environment.my_groundwater.get_amount()
             self.my_tile.environment.my_groundwater.set_weight(self.runoff + old_gw)
-        else:
-            pass
 
 
     def get_runoff(self):

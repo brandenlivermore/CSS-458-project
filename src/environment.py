@@ -20,8 +20,8 @@ class Environment(object):
 #################################################################
 
     #percent chances
-    chance_reservoir = .02 #chance of tile having resevoir
-    chance_well = .001  # chance of tile having a well
+    chance_reservoir = 0.00 #chance of tile having resevoir
+    chance_well = 0.50  # chance of tile having a well
 
     #list of possible agent types
     agent_types = [Teff, Soil, DrinkingWater, Deer, Wolf, GroundWater]
@@ -36,6 +36,7 @@ class Environment(object):
 
         #adding groundwater agent
         self.my_groundwater = GroundWater(enviro_in=self)
+        self.agent_totals[type(self.my_groundwater)] = [1, 0]
 
         #variables for environment
         self.teff_total_mass = 0  # in pounds
@@ -63,7 +64,7 @@ class Environment(object):
         #filling grid with tiles
         for x in range(self.height):
             for i in range (self.width):
-
+                water_type = WaterType.none
                 if(test_array[x,i] < self.chance_well):
                     water_type = WaterType.well
                 elif(test_array[x, i] < self.chance_reservoir):
@@ -72,8 +73,6 @@ class Environment(object):
                                  self)
                 self.grid[x,i].tile_x = x
                 self.grid[x,i].tile_y = i
-                well = False
-                res = False
 
     def update(self, day_in):
         self.current_day = day_in
@@ -120,7 +119,7 @@ class Environment(object):
             for y_i in range(y-radius, y+radius +1):
                 possible_cords.append([x_i,y_i])
 
-        possible_cords.remove([x,y])
+        #possible_cords.remove([x,y])
         tiles_out = []
 
         for x_i in range(len(possible_cords)):

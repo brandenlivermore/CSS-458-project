@@ -36,9 +36,13 @@ class DrinkingWater(Agent):
         :return:
         """
         if self.water_type == WaterType.well:
-            volume_gw = self.my_tile.environment.my_groundwater.get_amount()
+            runoff = self.my_tile.get_agent(src.Agents.soil.Soil).get_runoff()
+
+            volume_gw = self.my_tile.environment.my_groundwater.get_amount() + runoff
+            self.my_tile.environment.my_groundwater.set_weight(volume_gw)
+
             water_pumped = volume_gw * self.precent_groundwater_pulled
-            new_volume = max(self.current_volume + water_pumped, self.well_max_volume)
+            new_volume = min(self.current_volume + water_pumped, self.well_max_volume)
             water_used = new_volume - self.current_volume
             if water_used > 0:
                 self.my_tile.environment.my_groundwater.set_weight(volume_gw - water_used)
@@ -51,7 +55,7 @@ class DrinkingWater(Agent):
             overflow = (self.current_volume + runoff) % self.rez_max_volume
             old_gw = self.my_tile.environment.my_groundwater.get_amount()
             self.my_tile.environment.my_groundwater.set_weight(old_gw + overflow)
-            new_volume = max(self.rez_max_volume, self.current_volume + runoff)
+            new_volume = min(self.rez_max_volume, self.current_volume + runoff)
             difference = new_volume - self.current_volume
             self.my_tile.weight_changed(type(self), difference)
             self.current_volume = new_volume

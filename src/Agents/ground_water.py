@@ -13,7 +13,8 @@ class GroundWater(Agent):
             raise Exception("You cannot do that!")
 
         difference = new_volume - self.water_volume
-        self.my_environment.agent_totals[type(self)][1] = new_volume
+
+        self.my_environment.agent_totals[type(self)][1] = new_volume / 1000.0
         self.water_volume = new_volume
 
     def get_amount(self):

@@ -75,8 +75,6 @@ class Animal(Agent):
 
         :return: None
         '''
-        x = self.tile.tile_x
-        y = self.tile.tile_y
 
         adjacent_tiles = self.tile.environment.get_adjacent(self.tile,
                                                             radius=self.speed)
@@ -93,6 +91,7 @@ class Animal(Agent):
         difference = val - self.weight
         self.weight = val
         self.tile.weight_changed(type(self), difference)
+
     def get_amount(self):
         return self.weight
 
@@ -113,13 +112,13 @@ class Deer(Animal):
         https://www.michigan.gov/dnr/0,4570,7-153-10370_12150_12220-26946--,00.html
         http://www.desertusa.com/animals/white-tail-tdeer.html
     '''
-    TOTAL_DEER = 0
+
     CURRENT_BIRTHDAY = -1
 
     def __init__(self, tile):
         super(Deer, self).__init__(tile)
 
-        Deer.TOTAL_DEER += 1
+
         self.new_birthday()
 
         self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
@@ -161,29 +160,29 @@ class Deer(Animal):
         A random day within their mating season is chosen, and the birthday
         is 'gestationPeriod' days ahead of that.
         '''
-        start_mating = (self.matingSeasons[0] - 1) % 12 # non-inclusive
-        end_mating = self.matingSeasons[-1]
-
-        mating_day = random.randint(
-            Deer.CUMSUM_MONTHS[start_mating],
-            Deer.CUMSUM_MONTHS[end_mating])
-
-        gestation = self.gestationPeriod * 30 # convert months to days
-        Deer.CURRENT_BIRTHDAY = (mating_day + gestation) % 365
+        # start_mating = (self.matingSeasons[0] - 1) % 12 # non-inclusive
+        # end_mating = self.matingSeasons[-1]
+        #
+        # mating_day = random.randint(
+        #     Deer.CUMSUM_MONTHS[start_mating],
+        #     Deer.CUMSUM_MONTHS[end_mating])
+        #
+        # gestation = self.gestationPeriod * 30 # convert months to days
+        # Deer.CURRENT_BIRTHDAY = (mating_day + gestation) % 365
 
     def update(self):
         '''Update Deer
         '''
-        if (self.state == 'alive'): # deer alive
-            print("Update deer alive")
+        if (self.state == State.alive): # deer alive
+            #print("Update deer alive")
             self.move()
             self.eat()
             #once a year, spawn new deer all at once
-            if self.get_day() == Deer.CURRENT_BIRTHDAY:
-                self.reproduce()
-                self.new_birthday()
-        elif (self.state == 'dead'):
-            print("Update deer dead") # deer dead
+            # if self.get_day() == Deer.CURRENT_BIRTHDAY:
+            #     #self.reproduce()
+            #     self.new_birthday()
+        elif (self.state == State.dead):
+            # print("Update deer dead") # deer dead
             self.days_deceased += 1
             if self.days_deceased >= self.days_to_decompose:
                 self.remove()
@@ -194,7 +193,7 @@ class Deer(Animal):
         most abundant grass.
         :return:
         '''
-        tiles = self.tile.environment.get_adjacent(self.tile, self.speed)
+        tiles = self.tile.environment.get_adjacent(self.tile, int(self.speed))
 
         max_tile = self.tile
 
@@ -211,7 +210,6 @@ class Deer(Animal):
     def remove(self):
         self.tile.remove_agent(self)
         del self
-        Deer.TOTAL_DEER -= 1
 
     def eat(self):
         '''Eat Grass
@@ -233,7 +231,7 @@ class Deer(Animal):
             self.set_weight(self.weight-1) #starve a bit
             self.thirst -= 1 #thirst a bit
 
-            self._check_starve() # check for starvation here
+            self.check_starve() # check for starvation here
         else:
             #teff exists/ eat case
             #get teff weight
@@ -249,9 +247,9 @@ class Deer(Animal):
             self.set_weight(new_weight)
 
             #increase deer thirst meter
-            self.thirst += self.consumptionRate * teff_agent.percent_water
+            self.thirst += self.consumptionRate * Teff.percent_water
 
-    def _check_starve(self):
+    def check_starve(self):
         '''Check for starvation
         A check performed on a day where a deer is on a tile with no grass.
         Losing Between 25 and 30% of its body weight puts it at risk

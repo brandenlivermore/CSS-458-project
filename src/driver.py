@@ -34,6 +34,7 @@ class Driver(object):
             environment = current_tuple[1]
             run_output = []
             for day in weather_model.days:
+                print(day.day)
                 run_output.append(environment.update(day))
 
             self.daily_totals.append(run_output)
@@ -83,5 +84,5 @@ class Driver(object):
         plt.show()
 
 
-d = Driver()
-d.visualizeWeather()
+# d = Driver()
+# d.visualizeWeather()

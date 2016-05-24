@@ -39,7 +39,6 @@ class Tile(object):
                 continue
 
             agent_list = self.agent_mapping[agent_type]
-            N.random.shuffle(agent_list)
 
             for agent in agent_list:
                 agent.update()
@@ -48,9 +47,9 @@ class Tile(object):
         agent_type = type(agent_in)
 
         if agent_type in self.agent_mapping:
-            N.append(self.agent_mapping[agent_type], agent_in)
+            self.agent_mapping[agent_type].append(agent_in)
         else:
-            self.agent_mapping[agent_type] = N.array([agent_in])
+            self.agent_mapping[agent_type] = [agent_in]
         if agent_type in self.agent_weights:
             self.agent_weights[agent_type] = \
                 self.agent_weights[agent_type] + agent_in.get_amount()
@@ -61,12 +60,15 @@ class Tile(object):
             self.environment.agent_totals[agent_type][1] + (agent_in.get_amount() / 1000.0)]
 
     def remove_agent(self, agent_in):
-        type = type(agent_in)
+        agent_type = type(agent_in)
 
-        self.agent_mapping[type].remove(agent_in)
-        self.agent_weights[type] = self.agent_weights[type] - agent_in.get_amount()
-        self.environment.agent_totals[type] = [self.environment.agent_totals[type][0] -1, \
-            self.environment.agent_totals[type][1] - (agent_in.get_amount() / 1000.0)]
+        self.agent_mapping[agent_type].remove(agent_in)
+        # item_index = N.where(self.agent_mapping[agent_type] == agent_type)
+        # N.delete(self.agent_mapping[agent_type], item_index)
+        # self.agent_mapping[agent_type].remove(agent_in)
+        self.agent_weights[agent_type] = self.agent_weights[agent_type] - agent_in.get_amount()
+        self.environment.agent_totals[agent_type] = [self.environment.agent_totals[agent_type][0] -1, \
+            self.environment.agent_totals[agent_type][1] - (agent_in.get_amount() / 1000.0)]
 
     def weight_changed(self, type, difference):
         self.agent_weights[type] = \
@@ -75,7 +77,7 @@ class Tile(object):
             [1] + (difference / 1000.0)
 
     def get_agent(self, type):
-        if type in self.agent_mapping and self.agent_mapping[type].size > 0:
+        if type in self.agent_mapping and len(self.agent_mapping[type]) > 0:
                 return self.agent_mapping[type][0]
         else:
             return None

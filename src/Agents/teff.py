@@ -10,7 +10,7 @@ class Teff(Agent):
 
     #Constants for Teff Grass
     #sourced from http://teffgrass.com/harvesting-teff/
-    precent_water = .12 #amount of teff that is water
+    percent_water = .12 #amount of teff that is water
     growing_sun = 8.2 #hours a day
     water_consume_acres = 1785 #gallons
     ideal_temp = 63.275 #in degrees celsius
