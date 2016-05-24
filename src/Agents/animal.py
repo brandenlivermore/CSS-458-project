@@ -181,6 +181,7 @@ class Deer(Animal):
             #once a year, spawn new deer all at once
             if self.get_day() == Deer.CURRENT_BIRTHDAY:
                 self.reproduce()
+                self.new_birthday()
         elif (self.state == 'dead'):
             print("Update deer dead") # deer dead
             self.days_deceased += 1
