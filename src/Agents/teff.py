@@ -43,7 +43,7 @@ class Teff(Agent):
             del self
         ##checking if teff is in danger of desicating then
         elif self.current_weight <= self.threshold_acre:
-            if random() <= self.death_chance:
+            if random.random() <= self.death_chance:
                 self.my_tile.remove_agent(self)
                 del self
         #preforming the growth update in the case that the teff survives
