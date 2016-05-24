@@ -138,7 +138,7 @@ class Deer(Animal):
         self.weight = self.max_weight = random.uniform(110, 300) #lbs
         self.gestationPeriod = 7 #months pregnant
         self.matingSeasons = [4,5] #may, june
-        self.female_ratio = 0.66
+        self.female_ratio = 0.75 # 3 female : 1 adult buck
 
         self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
         self.birthRate = 0.0  # offspring per year
@@ -273,21 +273,21 @@ class Deer(Animal):
 
         reference: Just 2 deer without predation can produce a herd of up to 35
                 deer in just 7 years. (up to 5 offspring per year)
-
                 4-5 lbs at birth
 
         http://www.deerdamage.org/page/deer-facts
         http://bioweb.uwlax.edu/bio203/s2007/parr_jaco/taxonomy.htm
-
-
-        :return: None
         '''
-        # get single birthing day (rand mating season time + gestation period)
+        # * chance of being female
+        if random.random() < self.female_ratio:
+            # give each a chance to birth 0-3 babies
+            # place children on same tile as parent
+            babies = random.randint(0,3)
+            for i in babies:
+                baby = Deer(self.tile)
+                self.tile.add_agent(baby)
+                Deer.TOTAL_DEER += 1
 
-        # for each deer
-            # * chance of being female
-            # * give each a chance to birth 0-3 babies
-            # place children on empty squares (or just same tile?)
 
 
 class Wolf(Animal):
