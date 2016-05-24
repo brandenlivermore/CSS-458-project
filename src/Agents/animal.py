@@ -27,6 +27,11 @@ class Animal(Agent):
         tile : reference to animal's tile in environment
 
     """
+    # taken from weathermodel as workaround to help with reproduction
+    DAYS_IN_MONTH = N.array(
+        [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31])  # Days in each month
+    CUMSUM_MONTHS = N.cumsum(DAYS_IN_MONTH)
+
     def __init__(self, tile):
         self.speed = 0
         self.type = None # See AnimalType enum above, can be predator or prey
@@ -109,11 +114,13 @@ class Deer(Animal):
         http://www.desertusa.com/animals/white-tail-tdeer.html
     '''
     TOTAL_DEER = 0
+    CURRENT_BIRTHDAY = -1
 
     def __init__(self, tile):
         super(Deer, self).__init__(tile)
 
         Deer.TOTAL_DEER += 1
+        self.new_birthday()
 
         self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
         self.type = AnimalType.prey
@@ -130,7 +137,7 @@ class Deer(Animal):
         # deer can lose 25-30% of body weight without dying
         self.weight = self.max_weight = random.uniform(110, 300) #lbs
         self.gestationPeriod = 7 #months pregnant
-        self.matingSeasons = ["May","June"]
+        self.matingSeasons = [4,5] #may, june
         self.female_ratio = 0.66
 
         self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
@@ -143,6 +150,27 @@ class Deer(Animal):
 
         # self.objectives = [] #inherited from animal
 
+    def get_day(self):
+        day = self.tile.environment.current_day % 365
+
+    def new_birthday(self):
+        '''Generate New Birthday
+        A new birthday is calculated after a mass birth and upon initialization.
+        For simplification, all deer each year are born on the same day.
+
+        A random day within their mating season is chosen, and the birthday
+        is 'gestationPeriod' days ahead of that.
+        '''
+        start_mating = (self.matingSeasons[0] - 1) % 12 # non-inclusive
+        end_mating = self.matingSeasons[-1]
+
+        mating_day = random.randint(
+            Deer.CUMSUM_MONTHS[start_mating],
+            Deer.CUMSUM_MONTHS[end_mating])
+
+        gestation = self.gestationPeriod * 30 # convert months to days
+        Deer.CURRENT_BIRTHDAY = (mating_day + gestation) % 365
+
     def update(self):
         '''Update Deer
         '''
@@ -150,8 +178,9 @@ class Deer(Animal):
             print("Update deer alive")
             self.move()
             self.eat()
-            #TODO: once a year, spawn new deer all at once
-            # self.reproduce()
+            #once a year, spawn new deer all at once
+            if self.get_day() == Deer.CURRENT_BIRTHDAY:
+                self.reproduce()
         elif (self.state == 'dead'):
             print("Update deer dead") # deer dead
             self.days_deceased += 1
@@ -255,9 +284,10 @@ class Deer(Animal):
         '''
         # get single birthing day (rand mating season time + gestation period)
 
-        # take female population (whole * female_ratio)
-        # give each a chance to birth 1-4 babies
-        # place children on empty squares (or just same tile?)
+        # for each deer
+            # * chance of being female
+            # * give each a chance to birth 0-3 babies
+            # place children on empty squares (or just same tile?)
 
 
 class Wolf(Animal):
