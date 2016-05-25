@@ -79,7 +79,7 @@ class Teff(Agent):
                 to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
                 will_seed = np.random.random(len(to_seed))
                 for x in range(len(to_seed)):
-                    if will_seed[x] <= self.seed:
+                    if will_seed[x] <= self.seed and (to_seed[x].get_agent(Teff) == None):
                         to_seed[x].add_agent(Teff(to_seed[x]))
 
     def get_amount(self):
