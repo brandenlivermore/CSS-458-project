@@ -2,14 +2,10 @@ import math as m
 from copy import deepcopy
 
 import numpy as N
-from src.Agents.drinking_water import DrinkingWater
 from src.Agents.drinking_water import WaterType
 from src.Agents.ground_water import GroundWater
-from src.Agents.soil import Soil
 from src.Agents.soil import SoilType
-from src.Agents.teff import Teff
 
-from src.Agents.animal import Deer, Wolf
 from src.tile import Tile
 
 
@@ -41,15 +37,12 @@ class Environment(object):
     chance_well = 0.50  # chance of tile having a well
 
     #list of possible agent types
-    agent_types = [Teff, Soil, DrinkingWater, Deer, Wolf, GroundWater]
 #################################################################
 #                    Constructor
 #################################################################
     def __init__(self, in_width, in_height):
         #building the total count and weight dictionary
         self.agent_totals = {}
-        for agent in self.agent_types:
-            self.agent_totals[agent] = [0,0]
 
         #adding groundwater agent
         self.my_groundwater = GroundWater(enviro_in=self)
@@ -59,17 +52,10 @@ class Environment(object):
         self.teff_total_mass = 0  # in pounds
         self.tree_total_mass = 0  # in pounds
 
-        # values for storing the grid of tiles
-        self.width = 0
-        self.height = 0
-        self.grid = None
-
-
         #setting size of grid and creating grid
         self.height = in_height
         self.width = in_width
         self.grid = N.empty([self.height,self.width], dtype=Tile)
-
 
         #for managing day
         self.current_day = None
@@ -174,3 +160,10 @@ class Environment(object):
             y_2 = cord_2[1]
 
         return m.sqrt((x_2-x_1)**2+(y_2-y_1)**2)
+
+    def update_total_mass_and_count(self, type, mass_difference, count_difference=0):
+        if type in self.agent_totals:
+            self.agent_totals[type] = [self.agent_totals[type][0] + count_difference,\
+                self.agent_totals[type][1] + mass_difference]
+        else:
+            self.agent_totals[type] = [count_difference, mass_difference]
