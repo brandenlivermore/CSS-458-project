@@ -53,9 +53,10 @@ class Driver(object):
         scenario_number = None
         scenario_information = self.get_scenario_names_and_descriptions_and_modules()
 
-        descriptions_string = self.get_descriptions_string(scenario_information[:][:2])
+        descriptions_string = self.get_descriptions_string(scenario_information)
         while (True):
-            scenario_number = input(descriptions_string)
+            print(descriptions_string)
+            scenario_number = input()
 
             try:
                 scenario_number = int(scenario_number)
