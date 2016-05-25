@@ -13,6 +13,23 @@ from src.Agents.animal import Deer, Wolf
 from src.tile import Tile
 
 
+def nearly_equal(x,y, sig_fig=5):
+    '''Takes in two integers or floating point numbers and checks
+        if they are equal to within the significant digit
+
+        Source:
+          http://stackoverflow.com/questions/558216/function-to-determine-
+          if-two-numbers-are-nearly-equal-when-rounded-to-n-signific
+
+    :param x: first value to compare
+    :param y: second value to compare
+    :param sig_fig:  significant digits
+    :return: returns a boolean true if the values are the same
+                within the significant digits or false otherwise
+    '''
+    return (x == y or int(x*10**sig_fig) == int(y*10**sig_fig))
+
+
 class Environment(object):
 
 #################################################################

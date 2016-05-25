@@ -1,5 +1,5 @@
 import random as random
-
+import src.environment as enviro
 import numpy as np
 from src.Agents.soil import Soil
 
@@ -22,6 +22,7 @@ class Teff(Agent):
     high_growth = 12000 #pounds per 55 day period
     low_growth = 2500 #pounds per 55 day period
     growth_period = 55 #days
+    max_loss = .1 #maxium amount of teff loss to extreme temperatures
     death_chance = .05  #chance teff is wiped out if below threshold
     seed = 0.5 #base chance of seeding adjacent tiles
     updates = True
@@ -38,7 +39,7 @@ class Teff(Agent):
             return None
         #checking to see if there is no more Teff left to eat
         #if so removing the object from the tile and deletes self
-        if self.current_weight == 0:
+        if enviro.nearly_equal(self.current_weight, 0):
             self.my_tile.remove_agent(self)
             del self
         ##checking if teff is in danger of desicating then
@@ -71,7 +72,7 @@ class Teff(Agent):
             # if not inside desired values the teff looses some amount of it's mass
             # to the extreme temperatures
             else:
-                amount_lost = random.uniform(0, 0.2)
+                amount_lost = random.uniform(0, self.max_loss)
                 self.set_weight(self.current_weight * (1 - amount_lost))
             #doing seeding if the day of the year is the seed day
             if self.my_tile.environment.current_day.day in self.seed_date and \
