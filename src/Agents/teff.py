@@ -42,46 +42,49 @@ class Teff(Agent):
         if enviro.nearly_equal(self.current_weight, 0):
             self.my_tile.remove_agent(self)
             del self
+            return
         ##checking if teff is in danger of desicating then
         elif self.current_weight <= self.threshold_acre:
             if random.random() <= self.death_chance:
                 self.my_tile.remove_agent(self)
                 del self
+                return
         #preforming the growth update in the case that the teff survives
-        else:
-            #checking to make sure that the paremeters are inside
-            #safe values
-            sun = self.my_tile.environment.current_day.sun
-            temp = self.my_tile.environment.current_day.temp
-            #if true growing the teff
-            if temp >= self.min_temp and temp <= self.max_temp:
-                growth_factor = ((sun / self.growing_sun) + (temp / self.ideal_temp)) / 2
-                desired_growth = ((self.high_growth + self.low_growth) * growth_factor) \
-                    / self.growth_period
-                soil = self.my_tile.get_agent(Soil)
-                available_water = soil.get_amount()
-                #checking to makes sure the teff has enough water to grow
-                if available_water >= (self.water_consume_acres):
-                    self.set_weight(self.current_weight+desired_growth)
-                    soil.set_weight(available_water-(self.water_consume_acres))
-                #else desired growth is hampered by the available water
-                else:
-                    desired_growth = desired_growth * (available_water/self.water_consume_acres)
-                    self.set_weight(self.current_weight + desired_growth)
-                    soil.set_weight(0)
-            # if not inside desired values the teff looses some amount of it's mass
-            # to the extreme temperatures
+
+        #checking to make sure that the paremeters are inside
+        #safe values
+        sun = self.my_tile.environment.current_day.sun
+        temp = self.my_tile.environment.current_day.temp
+        #if true growing the teff
+        if temp >= self.min_temp and temp <= self.max_temp:
+            growth_factor = ((sun / self.growing_sun) + (temp / self.ideal_temp)) / 2
+            desired_growth = ((self.high_growth + self.low_growth) * growth_factor) \
+                / self.growth_period
+            soil = self.my_tile.get_agent(Soil)
+            available_water = soil.get_amount()
+            #checking to makes sure the teff has enough water to grow
+            if available_water >= (self.water_consume_acres):
+                self.set_weight(min(self.current_weight+desired_growth, self.max_per_acre))
+                soil.set_weight(available_water-(self.water_consume_acres))
+            #else desired growth is hampered by the available water
             else:
-                amount_lost = random.uniform(0, self.max_loss)
-                self.set_weight(self.current_weight * (1 - amount_lost))
-            #doing seeding if the day of the year is the seed day
-            if self.my_tile.environment.current_day.day in self.seed_date and \
-                    self.current_weight > self.threshold_acre:
-                to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
-                will_seed = np.random.random(len(to_seed))
-                for x in range(len(to_seed)):
-                    if will_seed[x] <= self.seed and (to_seed[x].get_agent(Teff) == None):
-                        to_seed[x].add_agent(Teff(to_seed[x]))
+                desired_growth = desired_growth * (available_water/self.water_consume_acres)
+                self.set_weight(min(self.current_weight + desired_growth, self.max_per_acre))
+                soil.set_weight(0)
+        # if not inside desired values the teff looses some amount of it's mass
+        # to the extreme temperatures
+        else:
+            amount_lost = random.uniform(0, self.max_loss)
+            self.set_weight(self.current_weight * (1 - amount_lost))
+
+        #doing seeding if the day of the year is the seed day
+        if self.my_tile.environment.current_day.day in self.seed_date and \
+                self.current_weight > self.threshold_acre:
+            to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
+            will_seed = np.random.random(len(to_seed))
+            for x in range(len(to_seed)):
+                if will_seed[x] <= self.seed and (to_seed[x].get_agent(Teff) == None):
+                    to_seed[x].add_agent(Teff(to_seed[x]))
 
     def get_amount(self):
         return self.current_weight

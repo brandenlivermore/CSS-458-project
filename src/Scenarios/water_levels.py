@@ -1,12 +1,12 @@
+import matplotlib.pyplot as plt
 import src.environment
-import src.Agents.teff
 from src.weathermodel import WeatherModel
 import numpy as N
-import matplotlib.pyplot as plt
+from src.Agents.drinking_water import DrinkingWater
+from src.Agents.ground_water import GroundWater
 
-weather = None
 
-description = 'Teff starts in the center, shows how teff spreads over time. '
+description = 'Teff starts in the center, shows how water volume increases over time. '
 
 def setup():
     size = 20
@@ -26,22 +26,20 @@ def display_results(results):
 
     days = N.arange(365)
 
-    teff_count = [day[src.Agents.teff.Teff][1] for day in results]
-    teff_agent_count = [day[src.Agents.teff.Teff][0] for day in results]
-
-
+    ground_water = [day[GroundWater][1] for day in results]
+    drinking_water = [day[DrinkingWater][1] for day in results]
 
     plt.subplot(2, 1, 1)
-    plt.plot(days, teff_count)
+    plt.plot(days, ground_water)
     plt.xlabel('Day of the year')
-    plt.ylabel('Teff weight (thousands of pounds)')
-    plt.title('Teff weight by day')
+    plt.ylabel('Ground water volume (thousands of gallons)')
+    plt.title('Ground water volume by day')
 
     plt.subplot(2, 1, 2)
-    plt.plot(days, teff_agent_count)
+    plt.plot(days, drinking_water)
     plt.xlabel('Day of the year')
-    plt.ylabel('Teff agent count')
-    plt.title('Teff count by day')
+    plt.ylabel('Drinking water volume (thousands of gallons)')
+    plt.title('Drinking water volume by day')
 
 
     plt.show()

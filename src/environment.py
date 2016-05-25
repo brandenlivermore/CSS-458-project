@@ -33,8 +33,8 @@ class Environment(object):
 #################################################################
 
     #percent chances
-    chance_reservoir = 0.00 #chance of tile having resevoir
-    chance_well = 0.50  # chance of tile having a well
+    chance_reservoir = 0.01 #chance of tile having resevoir
+    chance_well = 0.0075  # chance of tile having a well
 
     #list of possible agent types
 #################################################################
