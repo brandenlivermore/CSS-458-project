@@ -10,7 +10,7 @@
 #               two predictable extinction events
 
 from src.Agents.teff import Teff
-from weathermodel import WeatherModel
+from src.weathermodel import WeatherModel
 
 from src.Agents.animal import Deer
 from src.environment import Environment

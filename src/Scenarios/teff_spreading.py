@@ -1,6 +1,6 @@
 import src.environment
 import src.Agents.teff
-from weathermodel import WeatherModel
+from src.weathermodel import WeatherModel
 import numpy as N
 import matplotlib.pyplot as plt
 
@@ -13,8 +13,8 @@ def setup():
 
     environment = src.environment.Environment(size, size)
 
-    environment.grid[size / 2, size / 2].add_agent \
-        (src.Agents.teff.Teff(environment.grid[size / 2, size / 2]))
+    environment.grid[int(size / 2.), int(size / 2.)].add_agent \
+        (src.Agents.teff.Teff(environment.grid[int(size / 2.), int(size / 2.)]))
 
     global weather
 
