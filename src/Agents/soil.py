@@ -1,5 +1,4 @@
 from enum import Enum
-from src.Agents.teff import Teff
 import src.Agents.drinking_water
 
 from src.Agents.agent import Agent
@@ -79,6 +78,9 @@ class Soil(Agent):
         #doing evaporation for the tile's absorbed water in the case that there is a layer
         #of teff the evaporation will be lower
         #in the case that there is teff
+
+        from src.Agents.teff import Teff
+
         teff = self.my_tile.get_agent(Teff)
         temp = self.my_tile.environment.current_day.temp
         if teff is not None:
