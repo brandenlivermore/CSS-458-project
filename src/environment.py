@@ -96,7 +96,7 @@ class Environment(object):
 
         for tile in N.ndenumerate(self.grid):
             tile[1].update()
-        #self.grid[:,:].update()
+
         return deepcopy(self.agent_totals)
 
 
@@ -112,8 +112,8 @@ class Environment(object):
         :return: True if the location is inside the grid, False
             otherwise.
         '''
-        return location[0] >= 0 and location[0] < Environment.width \
-               and location[1] >= 0 and location[1] < Environment.height
+        return location[0] >= 0 and location[0] < self.width \
+               and location[1] >= 0 and location[1] < self.height
 
 
     def get_tile(self, loc):
@@ -139,9 +139,9 @@ class Environment(object):
         #possible_cords.remove([x,y])
         tiles_out = []
 
-        for x_i in range(len(possible_cords)):
-            if(self.is_location_valid(possible_cords[x_i])):
-                tiles_out.append(self.grid[possible_cords[0], possible_cords[1]])
+        for current_coord in possible_cords:
+            if(self.is_location_valid(current_coord)):
+                tiles_out.append(self.grid[current_coord[0], current_coord[1]])
 
         return tiles_out
 
