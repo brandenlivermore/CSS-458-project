@@ -78,7 +78,7 @@ class Teff(Agent):
             self.set_weight(self.current_weight * (1 - amount_lost))
 
         #doing seeding if the day of the year is the seed day
-        if self.my_tile.environment.current_day.day in self.seed_date and \
+        if self.my_tile.environment.current_day.day % 365 in self.seed_date and \
                 self.current_weight > self.threshold_acre:
             to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
             will_seed = np.random.random(len(to_seed))
