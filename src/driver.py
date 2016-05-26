@@ -71,12 +71,16 @@ class Driver(object):
                 print("Invalid index. ")
                 continue
 
+            # Get the correct scenario module
             module = scenario_information[scenario_number - 1][2]
 
+            # Tell the module to setup the environment and array of days
             info = module.setup()
 
+            # Run the scenario
             scenario_results = self.run_scenario(info)
 
+            # Pass the results to the scenario for display
             module.display_results(scenario_results)
 
             self.daily_totals = scenario_results[0]
@@ -113,22 +117,18 @@ class Driver(object):
     def visualizeEnvironmentTotals(self):
         days = N.arange(365)
         deer_count = [day[Deer][0] for day in self.daily_totals]
-        print(deer_count)
         teff_count = [day[Teff][1] for day in self.daily_totals]
-        print(teff_count)
 
         plt.subplot(2, 1, 1)
         plt.plot(days, deer_count)
         plt.xlabel('Day')
         plt.ylabel('Deer count')
-        plt.axis([0, len(days), -10, 1200])
         plt.title('Deer count by day')
 
         plt.subplot(2, 1, 2)
         plt.plot(days, teff_count)
         plt.xlabel('Day')
         plt.ylabel('Thousands of pounds of teff')
-        plt.axis([0, len(days), -10, 1200])
         plt.title('Teff weight by day')
 
         plt.tight_layout()
