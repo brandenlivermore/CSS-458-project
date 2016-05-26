@@ -196,16 +196,31 @@ class Deer(Animal):
         tiles = self.tile.environment.get_adjacent(self.tile, int(self.speed))
 
         max_tile = self.tile
-
         # Get tile with the most Teff within sight distance
-        for tile in tiles:
-            teff_amount = tile.get_agent(Teff).get_amount()
 
-            if teff_amount is not None and teff_amount > max_tile.get_amount():
-                max_tile = tile
+        for current_tile in tiles:
+            teff = current_tile.get_agent(Teff)
+
+            teff_amount = None
+
+            if teff is not None:
+                teff_amount = teff.get_amount()
+
+            current_teff = max_tile.get_agent(Teff)
+
+            current_teff_amount = 0.0
+
+            if current_teff is not None:
+                current_teff_amount = current_teff.get_amount()
+
+
+            if teff_amount is not None and teff_amount > current_teff_amount:
+                max_tile = current_tile
 
         #move deer to tile w/ most teff and set vars
-        self.tile.environment.agent_moved_to_tile(self, max_tile)
+
+        if max_tile != self.tile:
+            self.tile.environment.agent_moved_to_tile(self, max_tile)
 
     def remove(self):
         self.tile.remove_agent(self)

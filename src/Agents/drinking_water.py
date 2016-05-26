@@ -46,8 +46,7 @@ class DrinkingWater(Agent):
             water_used = new_volume - self.current_volume
             if water_used > 0:
                 self.my_tile.environment.my_groundwater.set_weight(volume_gw - water_used)
-                self.my_tile.weight_changed(type(self), water_used)
-                self.current_volume = new_volume
+                self.set_weight(new_volume)
 
 
         elif self.water_type == WaterType.reservoir:
@@ -56,9 +55,14 @@ class DrinkingWater(Agent):
             old_gw = self.my_tile.environment.my_groundwater.get_amount()
             self.my_tile.environment.my_groundwater.set_weight(old_gw + overflow)
             new_volume = min(self.rez_max_volume, self.current_volume + runoff)
-            difference = new_volume - self.current_volume
-            self.my_tile.weight_changed(type(self), difference)
-            self.current_volume = new_volume
+            self.set_weight(new_volume)
+
+        #evaporation
+        temp = self.my_tile.environment.current_day.temp
+        energy = (temp - 32) / 10   #the ten division is to slow the rate of evaporation
+                                    #do to the nature of having less exposed water
+        if energy > 0:
+            self.set_weight(self.current_volume * ((temp / 180)))
 
     def get_amount(self):
         return self.current_volume

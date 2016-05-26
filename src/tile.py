@@ -1,8 +1,7 @@
 from copy import deepcopy
 
-import numpy as N
 from src.Agents.drinking_water import DrinkingWater, WaterType
-from src.Agents.teff import Teff
+import src.Agents.teff
 
 from src.Agents.soil import Soil
 
@@ -20,7 +19,7 @@ class Tile(object):
         self.agent_mapping = {}  # list of objects present on tile
         self.agent_weights = {}
 
-        self.priority_agent_types = [Teff, Soil, DrinkingWater]
+        self.priority_agent_types = [src.Agents.teff.Teff, Soil, DrinkingWater]
 
         soil = Soil(soil_in, self)
         self.add_agent(soil)
@@ -56,8 +55,7 @@ class Tile(object):
         else:
             self.agent_weights[agent_type] = agent_in.get_amount()
 
-        self.environment.agent_totals[agent_type] = [self.environment.agent_totals[agent_type][0] + 1, \
-            self.environment.agent_totals[agent_type][1] + (agent_in.get_amount() / 1000.0)]
+        self.environment.update_total_mass_and_count(agent_type, agent_in.get_amount() / 1000.0, count_difference=1)
 
     def remove_agent(self, agent_in):
         agent_type = type(agent_in)
@@ -67,14 +65,13 @@ class Tile(object):
         # N.delete(self.agent_mapping[agent_type], item_index)
         # self.agent_mapping[agent_type].remove(agent_in)
         self.agent_weights[agent_type] = self.agent_weights[agent_type] - agent_in.get_amount()
-        self.environment.agent_totals[agent_type] = [self.environment.agent_totals[agent_type][0] -1, \
-            self.environment.agent_totals[agent_type][1] - (agent_in.get_amount() / 1000.0)]
+
+        self.environment.update_total_mass_and_count(agent_type, agent_in.get_amount() / -1000.0, count_difference=-1)
 
     def weight_changed(self, type, difference):
         self.agent_weights[type] = \
             self.agent_weights[type] + difference
-        self.environment.agent_totals[type][1] = self.environment.agent_totals[type]\
-            [1] + (difference / 1000.0)
+        self.environment.update_total_mass_and_count(type, difference / 1000.0, count_difference=0)
 
     def get_agent(self, type):
         if type in self.agent_mapping and len(self.agent_mapping[type]) > 0:

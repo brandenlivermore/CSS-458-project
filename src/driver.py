@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as N
 from src.weathermodel import WeatherModel
-from src.Scenarios.scenario import Scenario
 from src.Agents.animal import Deer
 from src.Agents.teff import Teff
 from src.Agents.drinking_water import DrinkingWater
 from src.Agents.ground_water import GroundWater
 from src.Agents.soil import Soil
 from src.Agents.animal import Wolf
+import os
+import importlib.util
 
 class Driver(object):
     """
@@ -22,46 +23,72 @@ class Driver(object):
         """
         self.daily_totals = []
 
-    def run(self):
-        scenarioNumber = 0
-        numScenarios = 5
-        while (scenarioNumber != -1):
-            scenarioNumber = input("Enter a number for the simulation you would like to run: \n" \
-                               "1. Only Deer and Teff. Teff does not grow \n" \
-                               "2. .... \n" \
-                               "3. .... \n" \
-                               "4. .... \n" \
-                               "5. .... \n" \
-                               "-1 to quit \n")
-            try:
-                scenarioNumber = int(scenarioNumber)
-            except ValueError:
-                scenarioNumber = 0
+    def import_module(self, file_name):
+        file_name = file_name[:-3]
+        return importlib.import_module("src.Scenarios." + file_name)
 
-            if (scenarioNumber > 0 and scenarioNumber <= numScenarios):
-                print("Running scenario " + str(scenarioNumber) + "\n")
-                s = Scenario()
-                if (scenarioNumber == 1):
-                    s.run_test_1()
-                elif (scenarioNumber == 2):
-                    s.run_test_2()
-                elif(scenarioNumber == 3):
-                    s.run_test_3()
-                elif(scenarioNumber == 4):
-                    s.run_test_4()
-                elif(scenarioNumber == 5):
-                    s.run_test_5()
-                self.daily_totals = self.runScenario([(s.weather, s.environment)])[0]
-            elif (scenarioNumber == -1):
-                print("Thank you for running our simulation")
+
+    def get_scenario_names_and_descriptions_and_modules(self):
+        names_and_descriptions_and_modules = []
+        for file in os.listdir("./src/Scenarios"):
+            if file.endswith(".py"):
+                module = self.import_module(file)
+                names_and_descriptions_and_modules.append((file, module.description, module))
+
+        return names_and_descriptions_and_modules
+    def get_descriptions_string(self, names_descriptions):
+
+
+        descriptions_string = "Enter the number of the simulation you'd like to run, or type -1 to quit. \n"
+
+        scenario_number = 1
+
+        for name_description_pair in names_descriptions:
+            descriptions_string += str(scenario_number) + ". " + name_description_pair[0] + ": " + name_description_pair[1] + "\n"
+            scenario_number += 1
+
+        return descriptions_string
+
+    def run(self):
+        scenario_number = None
+        scenario_information = self.get_scenario_names_and_descriptions_and_modules()
+
+        descriptions_string = self.get_descriptions_string(scenario_information)
+        while (True):
+            print(descriptions_string)
+            scenario_number = input()
+
+            try:
+                scenario_number = int(scenario_number)
+            except ValueError:
+                print("That is not a number. ")
+                scenario_number = -1
+
+            if scenario_number == -1:
+                print("Bye. ")
                 return
-            else:
-                print("Please enter a number between 1 and " + str(numScenarios) + "\n")
+            elif scenario_number < 1 or scenario_number > len(scenario_information):
+                print("Invalid index. ")
+                continue
+
+            # Get the correct scenario module
+            module = scenario_information[scenario_number - 1][2]
+
+            # Tell the module to setup the environment and array of days
+            info = module.setup()
+
+            # Run the scenario
+            scenario_results = self.run_scenario(info)
+
+            # Pass the results to the scenario for display
+            module.display_results(scenario_results)
+
+            self.daily_totals = scenario_results[0]
 
             self.visualizeWeather()
             self.visualizeEnvironmentTotals()
 
-    def runScenario(self, tuple_list):
+    def run_scenario(self, tuple_list):
         '''
 
         :param tuple_list: A list of tuples, with corresponding weather model and environment objects
@@ -90,22 +117,18 @@ class Driver(object):
     def visualizeEnvironmentTotals(self):
         days = N.arange(365)
         deer_count = [day[Deer][0] for day in self.daily_totals]
-        print(deer_count)
         teff_count = [day[Teff][1] for day in self.daily_totals]
-        print(teff_count)
 
         plt.subplot(2, 1, 1)
         plt.plot(days, deer_count)
         plt.xlabel('Day')
         plt.ylabel('Deer count')
-        plt.axis([0, len(days), -10, 1200])
         plt.title('Deer count by day')
 
         plt.subplot(2, 1, 2)
         plt.plot(days, teff_count)
         plt.xlabel('Day')
         plt.ylabel('Thousands of pounds of teff')
-        plt.axis([0, len(days), -10, 1200])
         plt.title('Teff weight by day')
 
         plt.tight_layout()
