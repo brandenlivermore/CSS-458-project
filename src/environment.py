@@ -95,8 +95,8 @@ class Environment(object):
         :return: True if the location is inside the grid, False
             otherwise.
         '''
-        return location[0] >= 0 and location[0] < Environment.width \
-               and location[1] >= 0 and location[1] < Environment.height
+        return location[0] >= 0 and location[0] < self.width \
+               and location[1] >= 0 and location[1] < self.height
 
 
     def get_tile(self, loc):
