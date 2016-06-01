@@ -21,7 +21,7 @@ class TestUM(unittest.TestCase):
         self.tile = self.e1.get_tile(loc)
         self.teff1 = Teff(self.tile)
 
-        self.d1 = Deer(self.tile)
+        # self.d1 = Deer(self.tile)
 
     def tearDown(self):
         pass
@@ -142,8 +142,8 @@ class TestUM(unittest.TestCase):
 
     # Teff tests
     def test_teff_initial_weight(self):
-        self.assertEqual(self.teff1.current_weight, 177, "Initial weight is 177 pounds")
-        self.assertEqual(self.teff1.get_amount(), 177, "Initial weight is 177 pounds")
+        self.assertEqual(self.teff1.current_weight, 167, "Initial weight is 167 pounds")
+        self.assertEqual(self.teff1.get_amount(), 167, "Initial weight is 167 pounds")
 
     # def test_teff_weight_change(self):
     #     newWeight = 10
