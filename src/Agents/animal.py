@@ -197,7 +197,7 @@ class Deer(Animal):
         self.thirst = self.get_thirst_today()
 
         if (self.state == State.alive and
-            self.old_age()): # deer alive
+            self.old_age() == False): # deer alive
             #print("Update deer alive")
             # calculate thirst for the day
             self.move()
