@@ -109,6 +109,10 @@ class Environment(object):
             return None
 
     def get_adjacent(self, local_in, radius=1):
+
+        x = None
+        y = None
+
         if(isinstance(local_in, Tile)):
             x = local_in.tile_x
             y = local_in.tile_y
@@ -118,9 +122,9 @@ class Environment(object):
 
         possible_cords = []
 
-        for x_i in range(x-radius, x-radius+1):
+        for x_i in range(x-radius, x+radius+1):
             for y_i in range(y-radius, y+radius +1):
-                possible_cords.append([x_i,y_i])
+                possible_cords.append([x + x_i,y + y_i])
 
         #possible_cords.remove([x,y])
         tiles_out = []
@@ -144,6 +148,7 @@ class Environment(object):
         old_tile = agent.tile
         old_tile.remove_agent(agent)
         new_tile.add_agent(agent)
+        agent.tile = new_tile
 
     def get_distance(self, cord_1, cord_2):
         if(isinstance(cord_1, Tile)):

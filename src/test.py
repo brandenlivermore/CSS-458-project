@@ -7,6 +7,7 @@ from src.tile import Tile
 from src.environment import Environment
 from src.Agents.teff import Teff
 from src.Agents.animal import State
+from src.Agents.soil import Soil
 
 class TestUM(unittest.TestCase):
 
@@ -175,6 +176,12 @@ class TestUM(unittest.TestCase):
         postAgents = len(self.tile.agent_mapping)
         self.assertGreater(postAgents, preAgents, "Adding an agent to a tile should increase agent_mapping")
 
+    def test_tile_weight_changed(self):
+        s = Soil(1, self.tile)
+        preWeight = self.tile.get_mass_and_totals()
+        self.tile.weight_changed(type(s), 10)
+        postWeight = self.tile.get_mass_and_totals()
+        self.assertEqual(preWeight,postWeight)
 
 if __name__ == '__main__':
     unittest.main()

@@ -81,7 +81,7 @@ class Tile(object):
 
     def get_mass_and_totals(self):
         out_values = deepcopy(self.agent_weights)
-        for agent_type in self.out_values:
+        for agent_type in out_values:
                 out_values[agent_type] = [len(self.agent_mapping[agent_type]),\
                                           self.agent_weights[agent_type]]
         return out_values
