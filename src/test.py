@@ -44,15 +44,15 @@ class TestUM(unittest.TestCase):
             self.assertGreater(self.w1.days[0].sun, 0, "A day cannot have less than 0 hours of sunlight")
 
         for i in range(0, self.w2.days.size):
-            self.assertLess(self.w2.days[i].sun, 24)
-            self.assertGreater(self.w2.days[0].sun, 0)
+            self.assertLess(self.w2.days[i].sun, 24, "A day cannot have more than 24 hours of sunlight")
+            self.assertGreater(self.w2.days[0].sun, 0, "A day cannot have less than 0 hours of sunlight")
 
     def test_weatherModel_precipitation(self):
         for i in range(0, self.w1.days.size):
-            self.assertGreaterEqual(self.w1.days[0].rain, 0)
+            self.assertGreaterEqual(self.w1.days[0].rain, 0, "A day cannot have less than 0 inches of precipitation")
 
         for i in range(0, self.w2.days.size):
-            self.assertGreaterEqual(self.w2.days[0].rain, 0)
+            self.assertGreaterEqual(self.w2.days[0].rain, 0, "A day cannot have less than 0 inches of precipitation")
 
     # Environment Tests
     def test_environment_width(self):
