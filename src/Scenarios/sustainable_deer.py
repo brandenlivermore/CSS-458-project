@@ -18,7 +18,7 @@ def setup():
     for x in range(size):
         for y in range(size):
             environment.grid[x,y].add_agent(Teff(environment.grid[x,y]))
-            for w in range(3):
+            for w in range(1):
                 environment.grid[x,y].add_agent(Deer(environment.grid[x,y]))
 
     global weather

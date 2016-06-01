@@ -18,18 +18,16 @@ def setup():
 
     global weather
 
-    weather = WeatherModel(numYears=1)
+    weather = WeatherModel(numYears=2)
     return [(weather, environment)]
 
 def display_results(results):
     results = results[0]
 
-    days = N.arange(365)
+    days = N.arange(365 * 2)
 
     teff_count = [day[src.Agents.teff.Teff][1] for day in results]
     teff_agent_count = [day[src.Agents.teff.Teff][0] for day in results]
-
-
 
     plt.subplot(2, 1, 1)
     plt.plot(days, teff_count)

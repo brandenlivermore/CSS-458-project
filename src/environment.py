@@ -124,7 +124,7 @@ class Environment(object):
 
         for x_i in range(x-radius, x+radius+1):
             for y_i in range(y-radius, y+radius +1):
-                possible_cords.append([x + x_i,y + y_i])
+                possible_cords.append([x_i, y_i])
 
         #possible_cords.remove([x,y])
         tiles_out = []
