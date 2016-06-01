@@ -115,7 +115,7 @@ class Driver(object):
 
     def get_image_file_name(self, scenario_name, file_suffix):
         import time
-        return scenario_name + "_" + file_suffix + "_" + time.strftime("%Y-%m-%d %H:%M:%S")
+        return scenario_name + " " + file_suffix + " " + time.strftime("%Y-%m-%d %H_%M_%S")
 
     def visualize_weather(self, scenario_name, weather_model):
         """
@@ -150,7 +150,7 @@ class Driver(object):
 
         plt.tight_layout()
 
-        plt.savefig(self.get_image_file_name(scenario_name, 'weather'))
+        plt.savefig(str(self.get_image_file_name(scenario_name, 'weather')))
 
 
 d = Driver()
