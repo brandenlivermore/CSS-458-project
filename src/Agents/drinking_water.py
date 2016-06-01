@@ -62,7 +62,7 @@ class DrinkingWater(Agent):
         energy = (temp - 32) / 10   #the ten division is to slow the rate of evaporation
                                     #do to the nature of having less exposed water
         if energy > 0:
-            self.set_weight(self.current_volume * ((temp / 180)))
+            self.set_weight(self.current_volume * (1 - (temp / 180)))
 
     def get_amount(self):
         return self.current_volume
