@@ -38,6 +38,21 @@ class TestUM(unittest.TestCase):
     def test_weatherModel_days_property(self):
         self.assertEqual(self.w1.totalDays, len(self.w1.days), "Total days must equal length of day property")
 
+    def test_weatherModel_sunlight(self):
+        for i in range(0, self.w1.days.size):
+            self.assertLess(self.w1.days[i].sun, 24)
+            self.assertGreater(self.w1.days[0].sun, 0)
+
+        for i in range(0, self.w2.days.size):
+            self.assertLess(self.w2.days[i].sun, 24)
+            self.assertGreater(self.w2.days[0].sun, 0)
+
+    def test_weatherModel_precipitation(self):
+        for i in range(0, self.w1.days.size):
+            self.assertGreaterEqual(self.w1.days[0].rain, 0)
+
+        for i in range(0, self.w2.days.size):
+            self.assertGreaterEqual(self.w2.days[0].rain, 0)
 
     # Environment Tests
     def test_environment_width(self):
