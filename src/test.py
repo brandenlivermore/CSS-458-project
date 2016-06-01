@@ -165,10 +165,15 @@ class TestUM(unittest.TestCase):
         self.assertEqual(self.d1.state, State.dead, "Animal state should not change from dead to alive")
 
     # Tile Tests
-
     def test_tile_location(self):
         self.assertEqual(self.tile.tile_x, 2, "Tile's x location is set to 2 in set up method")
         self.assertEqual(self.tile.tile_y, 1, "Tile's y location is set to 1 in set up method")
+
+    def test_tile_add_agent(self):
+        preAgents = len(self.tile.agent_mapping)
+        self.tile.add_agent(self.d1)
+        postAgents = len(self.tile.agent_mapping)
+        self.assertGreater(postAgents, preAgents, "Adding an agent to a tile should increase agent_mapping")
 
 
 if __name__ == '__main__':
