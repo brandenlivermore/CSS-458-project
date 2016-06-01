@@ -13,13 +13,13 @@ description = 'Teff starts in the center, shows how water volume increases over 
 def setup():
     size = 10
 
+
     environment = src.environment.Environment(size, size)
 
     environment.grid[int(size / 2.), int(size / 2.)].add_agent \
         (src.Agents.teff.Teff(environment.grid[int(size / 2.), int(size / 2.)]))
 
-    #Test setting wells to 100% percent chance
-    environment.chance_well = 1
+
 
     global weather
 
