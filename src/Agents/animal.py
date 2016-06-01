@@ -37,12 +37,14 @@ class Animal(Agent):
         self.type = None # See AnimalType enum above, can be predator or prey
         self.state = State.alive
         self.age = 0
+        self.day_born = self.get_current_day()
         self.max_age = 0
         self.weight = 0.0
         self.max_weight = 0.0
-        self.gestationPeriod = 0
+        self.gestation_period = 0
         self.matingSeasons = []
         self.tile = tile
+        self.is_female = None
 
         self.rememberedResources = [] #coords of water, food, etc.
         self.consumptionRate = 0.0
@@ -51,6 +53,13 @@ class Animal(Agent):
         self.days_to_decompose = 0.0 # based on 3 months for a human
         self.days_deceased = 0.0
         self.objectives = []
+
+    def get_current_day(self):
+        return int(self.tile.environment.current_day)
+    def get_day(self):
+        return int(self.tile.environment.current_day % 365)
+    def get_year(self):
+        return int(self.tile.environment.current_day / 365)
 
     def update(self):
         '''
@@ -112,18 +121,11 @@ class Deer(Animal):
         https://www.michigan.gov/dnr/0,4570,7-153-10370_12150_12220-26946--,00.html
         http://www.desertusa.com/animals/white-tail-tdeer.html
     '''
-
-    CURRENT_BIRTHDAY = -1
-
     def __init__(self, tile):
         super(Deer, self).__init__(tile)
 
-
-        self.new_birthday()
-
         self.speed = 10.0 #mph (top speed, escaping. can also jump 30 feet)
         self.type = AnimalType.prey
-        self.age = 0.0
         self.maxAge = random.uniform(6,14)
 
         '''
@@ -135,58 +137,75 @@ class Deer(Animal):
         self.thirst = self.max_thirst = 100 #TODO determine thirst level? Keep?
         # deer can lose 25-30% of body weight without dying
         self.weight = self.max_weight = random.uniform(110, 300) #lbs
-        self.gestationPeriod = 7 #months pregnant
+        self.gestation_period = 7 #months pregnant
         self.matingSeasons = [4,5] #may, june
         self.female_ratio = 0.75 # 3 female : 1 adult buck
 
-        self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
-        self.birthRate = 0.0  # offspring per year
+        #For reproduction
+        self.is_female = \
+            True if (random.random() < self.female_ratio) else False
+        self.next_spawning_year = -1
+        self.next_spawning_day = None
+        self.new_spawndate()
 
-        self.rememberedResources = []  # coords of water, food, etc.
+        # For eating
+        self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
+        # self.birthRate = 0.0  # offspring per year, impl in reproduce()
+
+
+        # self.rememberedResources = []  # coords of water, food, etc.
 
         self.days_to_decompose = 90.0 # based on 3 months for a human
         self.days_deceased = 0.0
 
         # self.objectives = [] #inherited from animal
 
-    def get_day(self):
-        day = self.tile.environment.current_day % 365
 
-    def new_birthday(self):
+    def new_spawndate(self):
         '''Generate New Birthday
-        A new birthday is calculated after a mass birth and upon initialization.
-        For simplification, all deer each year are born on the same day.
-
-        A random day within their mating season is chosen, and the birthday
-        is 'gestationPeriod' days ahead of that.
+        A new birthday is calculated after a birthing/upon initialization.
+        By choosing a random day within their mating season , and adding
+        'gestation_period' days to that.
         '''
-        # start_mating = (self.matingSeasons[0] - 1) % 12 # non-inclusive
-        # end_mating = self.matingSeasons[-1]
+        start_mating = (self.matingSeasons[0] - 1) % 12 # non-inclusive
+        end_mating = self.matingSeasons[-1]
         #
-        # mating_day = random.randint(
-        #     Deer.CUMSUM_MONTHS[start_mating],
-        #     Deer.CUMSUM_MONTHS[end_mating])
+        mating_day = random.randint(
+            Deer.CUMSUM_MONTHS[start_mating],
+            Deer.CUMSUM_MONTHS[end_mating])
         #
-        # gestation = self.gestationPeriod * 30 # convert months to days
-        # Deer.CURRENT_BIRTHDAY = (mating_day + gestation) % 365
+        gestation = self.gestation_period * 30 # convert months to days
+
+        # change birthday and deer
+        self.next_spawning_day += 1
+        self.next_spawning_day = (mating_day + gestation) % 365
 
     def update(self):
         '''Update Deer
         '''
-        if (self.state == State.alive): # deer alive
+        if (self.state == State.alive and
+            self.old_age()): # deer alive
             #print("Update deer alive")
+            # calculate thirst for the day
             self.move()
             self.eat()
-            #once a year, spawn new deer all at once
-            # if self.get_day() == Deer.CURRENT_BIRTHDAY:
-            #     #self.reproduce()
-            #     self.new_birthday()
+            # self.reproduce()
         elif (self.state == State.dead):
             # print("Update deer dead") # deer dead
             self.days_deceased += 1
             if self.days_deceased >= self.days_to_decompose:
                 self.remove()
 
+    def old_age(self):
+        curDay = self.get_current_day()
+        age = curDay - self.day_born
+        if (age >= self.max_age):
+            self.die()
+            return True
+        return False
+
+    def die(self):
+        self.state  = State.dead
     def move(self):
         '''Move Deer
         TODO: safely remove eat. move() simply relocates deer to place with
@@ -234,6 +253,8 @@ class Deer(Animal):
             biggest deer can last ~2 months straight, while
             smallest deer can last ~1 month straight without food
 
+        deer survive a month with little or no food
+
         PreCond: Deer previously moved to tile with most abundant grass
         :return:
         '''
@@ -264,6 +285,58 @@ class Deer(Animal):
             #increase deer thirst meter
             self.thirst += self.consumptionRate * Teff.percent_water
 
+    def get_thirst_today(self):
+        ''' Calculate Thirst
+        Determine gallons of water to drink on the current day via a
+        linear function
+        '''
+        #get temperature
+        x = self.tile.environment.current_day.temp #temperature, degF
+
+        avg_summer_temp = 70 #deg F
+        avg_winter_temp = 35 #deg F
+        winter_thirst_ratio = 0.00375 #gal water per 1 lb
+        summer_thirst_ratio = 0.0075 #gal water per 1 lb
+        m = (summer_thirst_ratio - winter_thirst_ratio) \
+            / (avg_summer_temp - avg_winter_temp) #slope
+
+        b = summer_thirst_ratio - (m*avg_summer_temp) #y-intercept
+
+        galPerLb = m * x + b# ratio of gal water needed for 1 lb
+
+        min_thirst = self.weight * winter_thirst_ratio * 0.25
+        if galPerLb > 0:
+            return galPerLb * self.max_weight
+        else:
+            return 0
+
+    def drink(self):
+        '''Drink Water
+        1 1/2 quarts (0.375 gal) for every 100 pounds of body weight per day during the
+        winter. (0.00375 gal/lb)
+        This requirement doubles during the summer, with deer needing
+        about 3 quarts for every 100 pounds of body weight (0.0075 gal/lb)
+        http://www.buckmanager.com/2012/07/31/whitetail-deer-water-requirements
+         -and-deer-hunting/
+
+
+        3 to 6 quarts of water a day, depending on the outside temperature
+        (consistent with former data if looking at 200lb deer)
+        http://www.huntingpa.com/deer_nutrition.html
+
+        known to die 3 days without water
+        http://www.huntingpa.com/deer_nutrition.html
+        '''
+        # thirst for the day is calculated by temperature
+        # Deer should have already gotten some water from food
+        # Drink remaining water from drinking_water source
+        # if water drank is below a certain threshold
+        #  decrease weight?
+        #  increment days_without_water
+        # else #enough water
+        #  if days_without_water > 0
+        #  days_without_water -= 1
+
     def check_starve(self):
         '''Check for starvation
         A check performed on a day where a deer is on a tile with no grass.
@@ -292,15 +365,17 @@ class Deer(Animal):
         http://www.deerdamage.org/page/deer-facts
         http://bioweb.uwlax.edu/bio203/s2007/parr_jaco/taxonomy.htm
         '''
-        # * chance of being female
-        if random.random() < self.female_ratio:
-            # give each a chance to birth 0-3 babies
-            # place children on same tile as parent
-            babies = random.randint(0,3)
-            for i in babies:
-                baby = Deer(self.tile)
-                self.tile.add_agent(baby)
-                Deer.TOTAL_DEER += 1
+        if (self.is_female \
+            and self.get_year() == self.next_spawning_year\
+            and self.get_day() == self.next_spawning_day):
+                #reproduce
+                # give each a chance to birth 0-3 babies
+                babies = random.randint(0,3)
+                # place children on same tile as parent
+                for i in range(babies):
+                    baby = Deer(self.tile)
+                    self.tile.add_agent(baby)
+                self.new_spawndate()
 
 
 
