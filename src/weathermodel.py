@@ -62,12 +62,14 @@ class WeatherModel(object):
             dailySun: Amount of sunlight on each day of the year (hours)
         """
         for year in range(0, self.numYears):
+            heat = N.random.normal(0, 5, self.numYears * 12)
+            precipChance = N.random.normal(0, 0.15, self.numYears * 12)
             for month in range(0, MONTHS_PER_YEAR):
                 for day in range(0, DAYS_IN_MONTH[month]):
                     cumulativeDay = (year * DAYS_PER_YEAR) + N.sum(DAYS_IN_MONTH[:month]) + day
                     precip = random.uniform(0,1)
-                    if (precip <= PRECIP_CHANCE[month]):
-                        precip = PRECIP_PER_DAY[month] #Add random variance
+                    if (precip <= (PRECIP_CHANCE[month] + precipChance[month])):
+                        precip = PRECIP_PER_DAY[month] * random.uniform(0.9,1.1)
                     else:
                         precip = 0
                     nextMonth = month + 1
@@ -75,7 +77,7 @@ class WeatherModel(object):
                         nextMonth = 0
                     thisMonthsInfluence = (DAYS_IN_MONTH[month] - day) / DAYS_IN_MONTH[month]
                     nextMonthsInfluence = 1 - thisMonthsInfluence
-                    avgTemp = (AVG_TEMP[month] * thisMonthsInfluence) + (AVG_TEMP[nextMonth] * nextMonthsInfluence)
+                    avgTemp = ((AVG_TEMP[month] + heat[month]) * thisMonthsInfluence) + ((AVG_TEMP[nextMonth] + heat[nextMonth]) * nextMonthsInfluence)
                     temp = N.random.normal(avgTemp, DAILY_TEMP_STD_DEV)
 
                     avgSun = (SUN_PER_DAY[month] * thisMonthsInfluence) + (SUN_PER_DAY[nextMonth] * nextMonthsInfluence)
@@ -83,3 +85,4 @@ class WeatherModel(object):
 
                     d = Day(cumulativeDay, precip, sun, temp)
                     self.days[cumulativeDay] = d
+
