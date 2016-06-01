@@ -121,18 +121,15 @@ class Environment(object):
             x = local_in[0]
             y = local_in[1]
 
-        possible_cords = []
-
-        for x_i in range(x-radius, x+radius+1):
-            for y_i in range(y-radius, y+radius +1):
-                possible_cords.append([x_i, y_i])
-
-        #possible_cords.remove([x,y])
         tiles_out = []
 
-        for current_coord in possible_cords:
-            if(self.is_location_valid(current_coord)):
-                tiles_out.append(self.grid[current_coord[0], current_coord[1]])
+
+        for x_i in range(max(x-radius, 0), min(x+radius+1, self.width)):
+            for y_i in range(max(y-radius, 0), min(y+radius +1, self.height)):
+                #if(self.is_location_valid([x_i, y_i])):
+                tiles_out.append(self.grid[x_i, y_i])
+
+        #possible_cords.remove([x,y])
 
         return tiles_out
 

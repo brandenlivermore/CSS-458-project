@@ -38,13 +38,15 @@ class Animal(Agent):
         self.type = None # See AnimalType enum above, can be predator or prey
         self.state = State.alive
         self.age = 0
+        self.tile = tile
+
         self.day_born = self.get_current_day()
+        print("Day born: " + str(self.day_born))
         self.max_age = 0
         self.weight = 0.0
         self.max_weight = 0.0
         self.gestation_period = 0
         self.matingSeasons = []
-        self.tile = tile
         self.is_female = None
 
         self.rememberedResources = [] #coords of water, food, etc.
@@ -58,11 +60,15 @@ class Animal(Agent):
         self.thirst = None
 
     def get_current_day(self):
-        return int(self.tile.environment.current_day)
+        if self.tile.environment.current_day is not None:
+            return int(self.tile.environment.current_day.day)
+        return 0
+
     def get_day(self):
-        return int(self.tile.environment.current_day % 365)
+        return int(self.tile.environment.current_day.day % 365)
+
     def get_year(self):
-        return int(self.tile.environment.current_day / 365)
+        return int(self.get_current_day() / 365)
 
     def update(self):
         '''
@@ -129,7 +135,7 @@ class Deer(Animal):
 
         self.speed = 10.0 #mph (top speed, escaping. can also jump 30 feet)
         self.type = AnimalType.prey
-        self.maxAge = random.uniform(6,14)
+        self.max_age = random.uniform(6,14)
 
         '''
         1 1/2 quarts for every 100 pounds of body weight per day during the
@@ -137,7 +143,9 @@ class Deer(Animal):
         This requirement doubles during the summer, with deer needing about 3
         quarts for every 100 pounds of body weight.
         '''
-        self.thirst = self.max_thirst = 100 #TODO determine thirst level? Keep?
+
+
+        self.thirst = 0
         # deer can lose 25-30% of body weight without dying
         self.weight = self.max_weight = random.uniform(110, 300) #lbs
         self.gestation_period = 7 #months pregnant
@@ -145,9 +153,8 @@ class Deer(Animal):
         self.female_ratio = 0.75 # 3 female : 1 adult buck
 
         #For reproduction
-        self.is_female = \
-            True if (random.random() < self.female_ratio) else False
-        self.next_spawning_year = -1
+        self.is_female = (random.random() < self.female_ratio)
+        self.next_spawning_year = self.get_year()
         self.next_spawning_day = None
         self.new_spawndate()
 
@@ -163,13 +170,6 @@ class Deer(Animal):
         self.min_thirst = self.weight * self.winter_thirst_ratio * 0.25
         self.days_without_water = 0
 
-
-        # self.rememberedResources = []  # coords of water, food, etc.
-
-        self.days_to_decompose = 90.0 # based on 3 months for a human
-        self.days_deceased = 0.0
-
-        # self.objectives = [] #inherited from animal
 
 
     def new_spawndate(self):
@@ -188,7 +188,8 @@ class Deer(Animal):
         gestation = self.gestation_period * 30 # convert months to days
 
         # change birthday and deer
-        self.next_spawning_day += 1
+        #self.next_spawning_day += 1
+        self.next_spawning_year += 1
         self.next_spawning_day = (mating_day + gestation) % 365
 
     def update(self):
@@ -196,25 +197,20 @@ class Deer(Animal):
         '''
         self.thirst = self.get_thirst_today()
 
-        if (self.state == State.alive and
-            self.old_age() == False): # deer alive
-            #print("Update deer alive")
+        if (self.old_age() == False): # deer alive
             # calculate thirst for the day
             self.move()
             self.eat()
             self.drink()
-            # self.reproduce()
-        elif (self.state == State.dead):
-            # print("Update deer dead") # deer dead
-            self.days_deceased += 1
-            if self.days_deceased >= self.days_to_decompose:
-                self.remove()
+            self.reproduce()
+        else:
+            self.remove()
+            return
 
     def old_age(self):
         curDay = self.get_current_day()
         age = curDay - self.day_born
-        if (age >= self.max_age):
-            self.die()
+        if (age >= self.max_age * 365):
             return True
         return False
 
@@ -231,23 +227,28 @@ class Deer(Animal):
         max_tile = self.tile
         # Get tile with the most Teff within sight distance
 
+        needed_resource = Teff
+
+        if self.days_without_water > 0:
+            needed_resource = DrinkingWater
+
+
         for current_tile in tiles:
-            teff = current_tile.get_agent(Teff)
+            resource = current_tile.get_agent(needed_resource)
 
-            teff_amount = None
+            resource_amount = None
 
-            if teff is not None:
-                teff_amount = teff.get_amount()
+            if resource is not None:
+                resource_amount = resource.get_amount()
 
-            current_teff = max_tile.get_agent(Teff)
+            current_resource = max_tile.get_agent(needed_resource)
 
-            current_teff_amount = 0.0
+            current_resource_amount = 0.0
 
-            if current_teff is not None:
-                current_teff_amount = current_teff.get_amount()
+            if current_resource is not None:
+                current_resource_amount = current_resource.get_amount()
 
-
-            if teff_amount is not None and teff_amount > current_teff_amount:
+            if resource_amount is not None and resource_amount > current_resource_amount:
                 max_tile = current_tile
 
         #move deer to tile w/ most teff and set vars
@@ -349,7 +350,8 @@ class Deer(Animal):
             #increment days without water
             self.days_without_water += 1
             if self.days_without_water >= 3:
-                self.die()
+                self.remove()
+                return
         elif (dwater_agent.get_amount() <= self.min_thirst):
             #water insufficient, only a little closer to death
             #drink all & decrease thirst. does not alter weight.
@@ -359,14 +361,16 @@ class Deer(Animal):
             #increment days without water by a little
             self.days_without_water += self.thirst/ self.get_thirst_today()
             if self.days_without_water >= 3:
-                self.die()
+                self.remove()
+                return
         else:
             #water sufficient. Thirst satisfied. Death delayed
-            new_volume = dwater_agent.get_amount() - self.thirst
+            new_volume = max(dwater_agent.get_amount() - self.thirst, 0)
+
             dwater_agent.set_weight(new_volume)
             self.thirst = 0
             if (self.days_without_water > 0):
-                self.days_without_water -= 1
+                self.days_without_water = 0
 
     def check_starve(self):
         '''Check for starvation
@@ -377,14 +381,15 @@ class Deer(Animal):
         '''
         if self.weight <= self.max_weight * 0.70:
             #insta-death
-            self.state = State.dead
-            pass
+            self.remove()
+            return
         elif self.weight <= self.max_weight * 0.75:
             #chance-death : 50/50
             coin = [True,False]
             N.random.shuffle(coin)
             if (coin[0]):
-                self.state = State.dead
+                self.remove()
+                return
 
     def reproduce(self):
         '''Increase Deer Population

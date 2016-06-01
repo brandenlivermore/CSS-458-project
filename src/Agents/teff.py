@@ -19,7 +19,7 @@ class Teff(Agent):
     seed_date = [225,175] #day of year teff tests to seed
     max_per_acre = 16000 #pounds
     threshold_acre = 177 #pounds
-    high_growth = 12000 #pounds per 55 day period
+    high_growth = 8000 #pounds per 55 day period
     low_growth = 2500 #pounds per 55 day period
     growth_period = 55 #days
     max_loss = .1 #maxium amount of teff loss to extreme temperatures

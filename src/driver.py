@@ -125,6 +125,8 @@ class Driver(object):
         No return
 
         """
+        import matplotlib
+        #matplotlib.use('Agg')
         dayArray = N.arange(0, weather_model.totalDays)
         temp = [x.temp for x in weather_model.days]
         sun = [x.sun for x in weather_model.days]
@@ -149,6 +151,8 @@ class Driver(object):
         plt.title('Daily Precipitation')
 
         plt.tight_layout()
+
+        plt.show()
 
         plt.savefig(str(self.get_image_file_name(scenario_name, 'weather')))
 

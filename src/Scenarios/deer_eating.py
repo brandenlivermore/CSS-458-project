@@ -14,7 +14,7 @@ from src.weathermodel import WeatherModel
 
 from src.Agents.animal import Deer
 from src.environment import Environment
-from src.Agents.ground_water import GroundWater
+from src.Agents.drinking_water import DrinkingWater
 import matplotlib.pyplot as plt
 import numpy as N
 
@@ -24,18 +24,18 @@ description = 'Uniformly distributed teff, 10 deer per tile, 30x30 grid.'
 
 def setup():
 
-    Teff.threshold_acre = 10000
-    Teff.updates = False
-    size = 10
+    # Teff.threshold_acre = 10000
+    # Teff.updates = False
+    size = 5
     environment = Environment(size,size)
     for x in range(size):
         for y in range(size):
             environment.grid[x,y].add_agent(Teff(environment.grid[x,y]))
-            for w in range(10):
+            for w in range(y % 3 + 1):
                 environment.grid[x,y].add_agent(Deer(environment.grid[x,y]))
 
     global weather
-    weather = WeatherModel(numYears=1)
+    weather = WeatherModel(numYears=14)
     return [(weather, environment)]
 
 def display_results(results):
@@ -43,11 +43,11 @@ def display_results(results):
     Teff.threshold_acre = 177
     Teff.updates = True
 
-    days = N.arange(365)
+    days = N.arange(365 * 14)
     deer_count = [day[Deer][0] for day in results]
     print(deer_count)
     teff_count = [day[Teff][1] for day in results]
-    ground_water_mass = [day[GroundWater][1] for day in results]
+    ground_water_mass = [day[DrinkingWater][1] for day in results]
     print(teff_count)
 
     plt.subplot(3, 1, 1)
@@ -69,6 +69,7 @@ def display_results(results):
     plt.title('Ground water mass by day')
 
 
-    plt.tight_layout()
+    #plt.tight_layout()
+    #
 
     plt.show()
