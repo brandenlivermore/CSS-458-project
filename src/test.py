@@ -56,16 +56,16 @@ class TestUM(unittest.TestCase):
 
     # Environment Tests
     def test_environment_width(self):
-        self.assertEqual(self.e1.width, 10)
-        self.assertEqual(self.e2.width, 20)
+        self.assertEqual(self.e1.width, 10, "Initial width for e1 is 10")
+        self.assertEqual(self.e2.width, 20, "Initial width for e2 is 20")
 
     def test_environment_height(self):
-        self.assertEqual(self.e1.height, 15)
-        self.assertEqual(self.e2.height, 25)
+        self.assertEqual(self.e1.height, 15, "Initial height for e1 is 15")
+        self.assertEqual(self.e2.height, 25, "Initial height for e2 is 25")
 
     def test_environment_teff_mass(self):
-        self.assertEqual(self.e1.teff_total_mass, 0)
-        self.assertEqual(self.e2.teff_total_mass, 0)
+        self.assertEqual(self.e1.teff_total_mass, 0, "Initial mass for e1 is 0")
+        self.assertEqual(self.e2.teff_total_mass, 0, "Initial mass for e2 is 0")
 
     def test_environment_valid_location(self):
         loc1 = [2,2]
@@ -198,7 +198,7 @@ class TestUM(unittest.TestCase):
         preWeight = self.tile.get_mass_and_totals()
         self.tile.weight_changed(type(s), 10)
         postWeight = self.tile.get_mass_and_totals()
-        self.assertEqual(preWeight,postWeight)
+        self.assertNotEqual(preWeight,postWeight, "Adding weight should change total mass")
 
 if __name__ == '__main__':
     unittest.main()
