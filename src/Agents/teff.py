@@ -29,11 +29,20 @@ class Teff(Agent):
     
     def __init__(self, tile_in):
         # for initial test 
-        self.current_weight = self.threshold_acre
+        self.current_weight = self.threshold_acre - 10
         self.coverage = 1  # percent of the land covered in teff
         self.my_tile = tile_in
 
     def update(self):
+        #doing seeding if the day of the year is the seed day
+        if self.my_tile.environment.current_day.day % 365 in self.seed_date and \
+                self.current_weight > self.threshold_acre:
+            to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
+            will_seed = np.random.random(len(to_seed))
+            for x in range(len(to_seed)):
+                if will_seed[x] <= self.seed and (to_seed[x].get_agent(Teff) == None):
+                    to_seed[x].add_agent(Teff(to_seed[x]))
+
         #####If the update variable is false update will not run
         if not self.updates:
             return None
@@ -77,14 +86,7 @@ class Teff(Agent):
             amount_lost = random.uniform(0, self.max_loss)
             self.set_weight(self.current_weight * (1 - amount_lost))
 
-        #doing seeding if the day of the year is the seed day
-        if self.my_tile.environment.current_day.day % 365 in self.seed_date and \
-                self.current_weight > self.threshold_acre:
-            to_seed = self.my_tile.environment.get_adjacent(self.my_tile)
-            will_seed = np.random.random(len(to_seed))
-            for x in range(len(to_seed)):
-                if will_seed[x] <= self.seed and (to_seed[x].get_agent(Teff) == None):
-                    to_seed[x].add_agent(Teff(to_seed[x]))
+
 
     def get_amount(self):
         return self.current_weight

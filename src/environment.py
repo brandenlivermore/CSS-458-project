@@ -44,6 +44,11 @@ class Environment(object):
         #building the total count and weight dictionary
         self.agent_totals = {}
 
+        #setting size of grid and creating grid
+        self.height = in_height
+        self.width = in_width
+        self.grid = N.empty([self.height,self.width], dtype=Tile)
+
         #adding groundwater agent
         self.my_groundwater = GroundWater(enviro_in=self)
         self.agent_totals[type(self.my_groundwater)] = [1, 0]
@@ -52,10 +57,6 @@ class Environment(object):
         self.teff_total_mass = 0  # in pounds
         self.tree_total_mass = 0  # in pounds
 
-        #setting size of grid and creating grid
-        self.height = in_height
-        self.width = in_width
-        self.grid = N.empty([self.height,self.width], dtype=Tile)
 
         #for managing day
         self.current_day = None

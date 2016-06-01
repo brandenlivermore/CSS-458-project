@@ -10,27 +10,33 @@ import src.grapher
 description = 'Teff starts in the center, shows how water volume increases over time. '
 
 def setup():
-    size = 100
+    size = 10
 
     environment = src.environment.Environment(size, size)
 
     environment.grid[int(size / 2.), int(size / 2.)].add_agent \
         (src.Agents.teff.Teff(environment.grid[int(size / 2.), int(size / 2.)]))
 
+    #Test setting wells to 100% percent chance
+    environment.chance_well = 1
+
     global weather
 
-    weather = WeatherModel(numYears=1)
+    weather = WeatherModel(numYears=5)
     return [(weather, environment)]
 
 def display_results(results):
     results = results[0]
 
-    days = N.arange(365)
+    days = N.arange(1825)
 
     graphs = []
+    drinking_water = []
 
     ground_water = [day[GroundWater][1] for day in results]
-    drinking_water = [day[DrinkingWater][1] for day in results]
+    for day in results:
+        if DrinkingWater in day:
+            drinking_water.append(day[DrinkingWater][1])
     soil = [day[Soil][1] for day in results]
 
     graphs.append((days, ground_water, 'Day of the year', \
