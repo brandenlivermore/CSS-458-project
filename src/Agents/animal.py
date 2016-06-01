@@ -121,7 +121,7 @@ class Deer(Animal):
 
         self.new_birthday()
 
-        self.speed = 30.0 #mph (top speed, escaping. can also jump 30 feet)
+        self.speed = 10.0 #mph (top speed, escaping. can also jump 30 feet)
         self.type = AnimalType.prey
         self.age = 0.0
         self.maxAge = random.uniform(6,14)
