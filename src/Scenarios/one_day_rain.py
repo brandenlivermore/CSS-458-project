@@ -4,6 +4,7 @@ import numpy as N
 from src.Agents.drinking_water import DrinkingWater
 from src.Agents.ground_water import GroundWater
 from src.Agents.soil import Soil
+from src.day import Day
 import src.grapher
 
 
@@ -18,11 +19,17 @@ def setup():
         (src.Agents.teff.Teff(environment.grid[int(size / 2.), int(size / 2.)]))
 
     #Test setting wells to 100% percent chance
-    #environment.chance_well = 1
+    environment.chance_well = 1
 
     global weather
 
     weather = WeatherModel(numYears=5)
+
+    #setting the first day to rain 100 inches and the remaining days to rain zero inches
+    weather.days[0].rain = 100
+    for day in range(1, 5 * 365):
+        weather.days[day].rain = 0
+
     return [(weather, environment)]
 
 def display_results(results):
@@ -52,6 +59,5 @@ def display_results(results):
     graphs.append((days, soil, 'Day of the year', \
                    'volume (1000s of gallons)', \
                    'Soil retained water volume by day'))
-
 
     src.grapher.display_graph(graphs)

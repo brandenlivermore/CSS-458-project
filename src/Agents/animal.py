@@ -3,6 +3,7 @@ from enum import Enum
 
 import numpy as N
 from src.Agents.teff import Teff
+from src.Agents.drinking_water import DrinkingWater
 
 from src.Agents.agent import Agent
 
@@ -53,6 +54,8 @@ class Animal(Agent):
         self.days_to_decompose = 0.0 # based on 3 months for a human
         self.days_deceased = 0.0
         self.objectives = []
+
+        self.thirst = None
 
     def get_current_day(self):
         return int(self.tile.environment.current_day)
@@ -152,6 +155,14 @@ class Deer(Animal):
         self.consumptionRate = 8.22 # lbs/day from 3000 lbs/yr
         # self.birthRate = 0.0  # offspring per year, impl in reproduce()
 
+        # For drinking
+        self.avg_summer_temp = 70 #deg F
+        self.avg_winter_temp = 35 #deg F
+        self.winter_thirst_ratio = 0.00375 #gal water per 1 lb
+        self.summer_thirst_ratio = 0.0075 #gal water per 1 lb
+        self.min_thirst = self.weight * self.winter_thirst_ratio * 0.25
+        self.days_without_water = 0
+
 
         # self.rememberedResources = []  # coords of water, food, etc.
 
@@ -183,12 +194,15 @@ class Deer(Animal):
     def update(self):
         '''Update Deer
         '''
+        self.thirst = self.get_thirst_today()
+
         if (self.state == State.alive and
-            self.old_age()): # deer alive
+            self.old_age() == False): # deer alive
             #print("Update deer alive")
             # calculate thirst for the day
             self.move()
             self.eat()
+            self.drink()
             # self.reproduce()
         elif (self.state == State.dead):
             # print("Update deer dead") # deer dead
@@ -265,7 +279,7 @@ class Deer(Animal):
         if (teff_agent is None or teff_agent.current_weight <= 0):
             # teff empty/ starve case
             self.set_weight(self.weight-1) #starve a bit
-            self.thirst -= 1 #thirst a bit
+            # self.thirst -= 1 #thirst a bit
 
             self.check_starve() # check for starvation here
         else:
@@ -282,8 +296,8 @@ class Deer(Animal):
             new_weight = min(self.weight + weight_gained, self.max_weight)
             self.set_weight(new_weight)
 
-            #increase deer thirst meter
-            self.thirst += self.consumptionRate * Teff.percent_water
+            #decrease deer thirst for the day
+            self.thirst -= self.consumptionRate * Teff.percent_water
 
     def get_thirst_today(self):
         ''' Calculate Thirst
@@ -293,22 +307,19 @@ class Deer(Animal):
         #get temperature
         x = self.tile.environment.current_day.temp #temperature, degF
 
-        avg_summer_temp = 70 #deg F
-        avg_winter_temp = 35 #deg F
-        winter_thirst_ratio = 0.00375 #gal water per 1 lb
-        summer_thirst_ratio = 0.0075 #gal water per 1 lb
-        m = (summer_thirst_ratio - winter_thirst_ratio) \
-            / (avg_summer_temp - avg_winter_temp) #slope
+        m = (self.summer_thirst_ratio - self.winter_thirst_ratio) \
+            / (self.avg_summer_temp - self.avg_winter_temp) #slope
 
-        b = summer_thirst_ratio - (m*avg_summer_temp) #y-intercept
+        b = self.summer_thirst_ratio - (m*self.avg_summer_temp) #y-intercept
 
+        #linear function for thirst per lb with resp to temperature
         galPerLb = m * x + b# ratio of gal water needed for 1 lb
 
-        min_thirst = self.weight * winter_thirst_ratio * 0.25
-        if galPerLb > 0:
-            return galPerLb * self.max_weight
-        else:
-            return 0
+        #apply thirst ratio to deer's weight
+        thirst = galPerLb * self.max_weight
+
+        #account for small/negative thirst
+        return max(thirst, self.min_thirst)
 
     def drink(self):
         '''Drink Water
@@ -319,7 +330,6 @@ class Deer(Animal):
         http://www.buckmanager.com/2012/07/31/whitetail-deer-water-requirements
          -and-deer-hunting/
 
-
         3 to 6 quarts of water a day, depending on the outside temperature
         (consistent with former data if looking at 200lb deer)
         http://www.huntingpa.com/deer_nutrition.html
@@ -329,13 +339,34 @@ class Deer(Animal):
         '''
         # thirst for the day is calculated by temperature
         # Deer should have already gotten some water from food
+
         # Drink remaining water from drinking_water source
-        # if water drank is below a certain threshold
-        #  decrease weight?
-        #  increment days_without_water
-        # else #enough water
-        #  if days_without_water > 0
-        #  days_without_water -= 1
+        dwater_agent = self.tile.get_agent(DrinkingWater)
+
+        if (dwater_agent is None
+            or dwater_agent.get_amount() <= 0):
+            # water absent/ thirst case
+            #increment days without water
+            self.days_without_water += 1
+            if self.days_without_water >= 3:
+                self.die()
+        elif (dwater_agent.get_amount() <= self.min_thirst):
+            #water insufficient, only a little closer to death
+            #drink all & decrease thirst. does not alter weight.
+            self.thirst -= dwater_agent.get_amount()
+            dwater_agent.set_weight(0)
+
+            #increment days without water by a little
+            self.days_without_water += self.thirst/ self.get_thirst_today()
+            if self.days_without_water >= 3:
+                self.die()
+        else:
+            #water sufficient. Thirst satisfied. Death delayed
+            new_volume = dwater_agent.get_amount() - self.thirst
+            dwater_agent.set_weight(new_volume)
+            self.thirst = 0
+            if (self.days_without_water > 0):
+                self.days_without_water -= 1
 
     def check_starve(self):
         '''Check for starvation
