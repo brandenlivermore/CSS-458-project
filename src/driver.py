@@ -78,17 +78,15 @@ class Driver(object):
             info = module.setup()
 
             # Run the scenario
-            scenario_results = self.run_scenario(info)
+            scenario_results = self.run_scenario(info, scenario_information[scenario_number - 1][0][:-3])
 
             # Pass the results to the scenario for display
             module.display_results(scenario_results)
 
             self.daily_totals = scenario_results[0]
 
-            self.visualizeWeather()
-            self.visualizeEnvironmentTotals()
 
-    def run_scenario(self, tuple_list):
+    def run_scenario(self, tuple_list, scenario_name):
         '''
 
         :param tuple_list: A list of tuples, with corresponding weather model and environment objects
@@ -109,33 +107,17 @@ class Driver(object):
                 run_output.append(environment.update(day))
 
             self.daily_totals.append(run_output)
+            self.visualize_weather(scenario_name, weather_model)
 
 
         return self.daily_totals
-        ##########################################################################################
 
-    def visualizeEnvironmentTotals(self):
-        days = N.arange(365)
-        deer_count = [day[Deer][0] for day in self.daily_totals]
-        teff_count = [day[Teff][1] for day in self.daily_totals]
 
-        plt.subplot(2, 1, 1)
-        plt.plot(days, deer_count)
-        plt.xlabel('Day')
-        plt.ylabel('Deer count')
-        plt.title('Deer count by day')
+    def get_image_file_name(self, scenario_name, file_suffix):
+        import time
+        return scenario_name + " " + file_suffix + " " + time.strftime("%Y-%m-%d %H:%M:%S")
 
-        plt.subplot(2, 1, 2)
-        plt.plot(days, teff_count)
-        plt.xlabel('Day')
-        plt.ylabel('Thousands of pounds of teff')
-        plt.title('Teff weight by day')
-
-        plt.tight_layout()
-
-        plt.show()
-
-    def visualizeWeather(self):
+    def visualize_weather(self, scenario_name, weather_model):
         """
 
         Returns
@@ -143,34 +125,32 @@ class Driver(object):
         No return
 
         """
-        dayArray = N.arange(0, self.weatherModel.totalDays)
-        temp = [x.temp for x in self.weatherModel.days]
-        sun = [x.sun for x in self.weatherModel.days]
-        rain = [x.rain for x in self.weatherModel.days]
-        print(rain)
+        dayArray = N.arange(0, weather_model.totalDays)
+        temp = [x.temp for x in weather_model.days]
+        sun = [x.sun for x in weather_model.days]
+        rain = [x.rain for x in weather_model.days]
         plt.subplot(3, 1, 1)
         plt.plot(dayArray, temp)
-        plt.axis([0, self.weatherModel.totalDays, 0, 90])
         plt.xlabel('Day')
         plt.ylabel('Temperature (F)')
         plt.title('Daily Temp')
 
         plt.subplot(3, 1, 2)
         plt.plot(dayArray, sun)
-        plt.axis([0, self.weatherModel.totalDays, 0, 24])
         plt.xlabel('Day')
         plt.ylabel('Sunlight (hours)')
         plt.title('Daily Sun')
 
         plt.subplot(3, 1, 3)
         plt.plot(dayArray, rain)
-        plt.axis([0, self.weatherModel.totalDays, 0, 1])
+        #plt.axis([0, self.weatherModel.totalDays, 0, 1])
         plt.xlabel('Day')
         plt.ylabel('Precipitation (inches)')
         plt.title('Daily Precipitation')
 
         plt.tight_layout()
-        plt.show()
+
+        plt.savefig(self.get_image_file_name(scenario_name, 'weather'))
 
 
 d = Driver()
