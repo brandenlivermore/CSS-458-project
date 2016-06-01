@@ -40,8 +40,8 @@ class TestUM(unittest.TestCase):
 
     def test_weatherModel_sunlight(self):
         for i in range(0, self.w1.days.size):
-            self.assertLess(self.w1.days[i].sun, 24)
-            self.assertGreater(self.w1.days[0].sun, 0)
+            self.assertLess(self.w1.days[i].sun, 24, "A day cannot have more than 24 hours of sunlight")
+            self.assertGreater(self.w1.days[0].sun, 0, "A day cannot have less than 0 hours of sunlight")
 
         for i in range(0, self.w2.days.size):
             self.assertLess(self.w2.days[i].sun, 24)
@@ -164,11 +164,12 @@ class TestUM(unittest.TestCase):
     # Deer Tests
     def test_deer_initial_weight(self):
         self.assertLess(self.d1.weight, 300, "Starting weight must be less than 300 pounds")
-        self.assertGreaterEqual(self.d1.weight, 110, "Starting weight must be greater or equal to 110 pounds")
+        self.assertGreaterEqual(self.d1.weight, 110,
+                                "Starting weight must be greater or equal to 110 pounds")
 
     def test_deer_starve(self):
 
-        self.assertEqual(self.d1.state, State.alive, "Deer should initially be alive")
+        self.assertEqual(self.d1.state, State.alive, "Deer should be alive")
 
         self.d1.weight = self.d1.max_weight * 0.6
         self.d1.check_starve()
@@ -189,7 +190,8 @@ class TestUM(unittest.TestCase):
         preAgents = len(self.tile.agent_mapping)
         self.tile.add_agent(self.d1)
         postAgents = len(self.tile.agent_mapping)
-        self.assertGreater(postAgents, preAgents, "Adding an agent to a tile should increase agent_mapping")
+        self.assertGreater(postAgents, preAgents,
+                           "Adding an agent to a tile should increase agent_mapping")
 
     def test_tile_weight_changed(self):
         s = Soil(1, self.tile)
