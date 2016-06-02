@@ -20,7 +20,6 @@ def setup():
         (src.Agents.teff.Teff(environment.grid[int(size / 2.), int(size / 2.)]))
 
 
-
     global weather
 
     weather = WeatherModel(numYears=5)

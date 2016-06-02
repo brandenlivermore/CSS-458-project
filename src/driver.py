@@ -97,17 +97,21 @@ class Driver(object):
         :return: daily_totals
         '''
 
-
+        scen_number = 0
         for current_tuple in tuple_list:
+            scen_number += 1
             weather_model = current_tuple[0]
             environment = current_tuple[1]
             run_output = []
             for day in weather_model.days:
-                print(day.day)
                 run_output.append(environment.update(day))
 
             self.daily_totals.append(run_output)
-            self.visualize_weather(scenario_name, weather_model)
+            # Can uncomment this to show the weather at the end of each
+            # simulation.
+            #self.visualize_weather(scenario_name, weather_model)
+
+            print("scenario number: " + str(scen_number))
 
 
         return self.daily_totals
@@ -155,7 +159,6 @@ class Driver(object):
         plt.show()
 
         plt.savefig(str(self.get_image_file_name(scenario_name, 'weather')))
-
 
 d = Driver()
 d.run()

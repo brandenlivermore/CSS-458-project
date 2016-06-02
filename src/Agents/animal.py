@@ -7,7 +7,6 @@ from src.Agents.drinking_water import DrinkingWater
 
 from src.Agents.agent import Agent
 
-
 # from tile import Tile #err. Just pass in reference to tile obj to inst var
 
 class AnimalType(Enum):
@@ -41,7 +40,7 @@ class Animal(Agent):
         self.tile = tile
 
         self.day_born = self.get_current_day()
-        print("Day born: " + str(self.day_born))
+        #print("Day born: " + str(self.day_born))
         self.max_age = 0
         self.weight = 0.0
         self.max_weight = 0.0
@@ -97,7 +96,7 @@ class Animal(Agent):
         adjacent_tiles = self.tile.environment.get_adjacent(self.tile,
                                                             radius=self.speed)
 
-        index = random.randint(len(adjacent_tiles))
+        index = N.random.randint(len(adjacent_tiles))
 
         self.tile.environment.agent_moved_to_tile(self, adjacent_tiles[index])
 

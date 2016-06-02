@@ -1,4 +1,4 @@
-from src.Agents.animal import Animal
+import src.Agents.animal
 from src.Agents.teff import Teff
 from src.environment import Environment
 
@@ -12,8 +12,7 @@ from src.environment import Environment
 #
 #
 
-
-class Bugs(Animal):
+class Bugs(src.Agents.animal.Animal):
 
     #source: http://www.fao.org/ag/locusts/en/info/info/faq/
     CONSUME_RATE = 0.1 #the rate a witch a swarm consumes itself
@@ -31,8 +30,8 @@ class Bugs(Animal):
                 Constructor for the Bugs Agent, uses the animal
         '''
         super().__init__(tile)
-        self.set_weight(weight)
-        self.speed = 1.0
+        self.weight = weight
+        self.speed = 1
         self.type = type(self)
         self.individuals = self.weight / self.NEWBORN_SIZE
         self.day_alive = 0
@@ -48,8 +47,8 @@ class Bugs(Animal):
         '''
         teff = self.tile.get_agent(Teff)
         if teff is not None:
-            amount_eat = min(self.weight, teff.current_weight())
-            teff.set_weight(teff.current_weight() - amount_eat)
+            amount_eat = min(self.weight, teff.get_amount())
+            teff.set_weight(teff.get_amount() - amount_eat)
             if self.current_size < self.ADULT_SIZE:
                 self.current_size = self.current_size + ((amount_eat / self.weight) \
                     * self.current_size * ((self.ADULT_SIZE - self.NEWBORN_SIZE) / self.BREED_INITIAL))
@@ -71,6 +70,7 @@ class Bugs(Animal):
             if self.broods == 0:
                 self.tile.remove_agent(self)
                 del self
+                return
         else:
             self.time_to_next_brood -= 1
 
@@ -78,9 +78,8 @@ class Bugs(Animal):
         if self.hatch >= 0:
             self.day_alive += 1
             self.consume()
+            self.move()
             self.breed()
+
         else:
             self.hatch += 1
-
-
-        self.move()

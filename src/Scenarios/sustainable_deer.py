@@ -44,13 +44,13 @@ def display_results(results):
     plt.subplot(3, 1, 2)
     plt.plot(days, teff_count)
     plt.xlabel('Day')
-    plt.ylabel('Thousands of pounds of teff')
+    plt.ylabel('1000s of lbs of Teff')
     plt.title('Teff weight by day')
 
     plt.subplot(3, 1, 3)
     plt.plot(days, ground_water_mass)
     plt.xlabel('Day')
-    plt.ylabel('Thousands of gallons of ground water')
+    plt.ylabel('1000s of gal. of water')
     plt.title('Ground water mass by day')
 
 

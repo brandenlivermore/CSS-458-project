@@ -27,6 +27,21 @@ from src.Agents.animal import Deer
 from src.Agents.soil import Soil
 import numpy as N
 
+def remove_bad_simulations(types, list_returns):
+    bad_simulations = []
+
+    for result in list_returns:
+        for type in types:
+            if type not in result[0]:
+                bad_simulations.append(result)
+                print("removing")
+                break
+
+
+    for bad in bad_simulations:
+        list_returns.remove(bad)
+
+    return list_returns
 def average_returns(list_returns, type):
     '''Averages an Agents daily values for multiple runs
 
@@ -41,6 +56,9 @@ def average_returns(list_returns, type):
     #the various runs
     output_counts = []
     output_weight = []
+
+    if len(list_returns) is 0:
+        return None
 
     #Averaging the days and appending to the list
     for x in range(len(list_returns[0])):
